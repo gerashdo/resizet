@@ -1,0 +1,125 @@
+.drag-drop {
+  background: var(--color-background-light);
+  border: 1px solid var(--color-background-lighter);
+  border-radius: 8px;
+}
+.document-uploader {
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 8px;
+  cursor: pointer;
+  width: auto;
+  height: calc(100% - 4px);
+
+  &.active {
+    border-color: #6dc24b;
+  }
+
+  .upload-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    svg {
+      width: 5rem;
+      aspect-ratio: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    div {
+      p {
+        margin: 0;
+        font-size: 16px;
+        text-align: center;
+      }
+
+      p:first-child {
+        font-weight: bold;
+      }
+    }
+  }
+
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    height: 30vh;
+    &__container {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+    }
+  }
+
+  .file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+
+    .file-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1;
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        color: #333;
+      }
+    }
+
+    .file-actions {
+      cursor: pointer;
+
+      &:hover {
+        svg {
+          color: #d44;
+        }
+      }
+    }
+  }
+
+  .browse-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: var(--color-primary);
+    transition: all 0.25s ease;
+    &:hover {
+      background-color: var(--color-primary-dark);
+    }
+    &:active {
+      background-color: var(--color-primary-light);
+    }
+  }
+
+  .success-file {
+    display: flex;
+    align-items: center;
+    color: #6dc24b;
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+}
