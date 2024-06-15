@@ -33,7 +33,7 @@ const RangeSlider: React.FC<SliderProps> = ({ label, min, max, step, initialValu
         <span
           className="tooltip"
           >
-          {initialValue}
+          {initialValue}%
         </span>
       </div>
       <div className="slider-labels">

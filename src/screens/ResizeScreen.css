@@ -1,0 +1,38 @@
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+
+  h1 {
+    font-size: 3rem;
+    margin: 0;
+    font-weight: bold;
+
+    span {
+      color: var(--color-primary);
+    }
+  }
+
+  div.drag-drop {
+    background-color: transparent;
+    border: none;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+div.upload-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  justify-content: center;
+  align-items: center;
+}
+
+div.settings {
+  display: flex;
+  justify-content: space-between;
+  gap: 2.5rem;
+  width: 30rem;
+}

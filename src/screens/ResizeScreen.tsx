@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import DragAndDrop from "../components/DragAndDrop"
 import RangeSlider from "../components/RangeSlider"
+import { FileList } from "../components/FileList"
+
+import "./ResizeScreen.css"
 
 export const ResizeScreen = () => {
   const [files, setFiles] = useState<File[]>([])
@@ -8,9 +11,6 @@ export const ResizeScreen = () => {
   const [imageQuality, setImageQuality] = useState<number>(100)
   const [imageSize, setImageSize] = useState<number>(100)
   const [isCompressing, setIsCompressing] = useState<boolean>(false)
-  useEffect(() => {
-    console.log(files)
-  }, [files])
 
   const handleResize = () => {
     setIsCompressing(true)
@@ -50,30 +50,39 @@ export const ResizeScreen = () => {
   }
 
   return (
-    <div>
-      <h1>Resize Screen</h1>
-      { isCompressing && <p>Compressing...</p>}
-      <DragAndDrop onFilesSelected={setFiles} files={files} width="30rem" height='30rem'/>
-      <RangeSlider
-        label="Image Quality"
-        min={10}
-        max={100}
-        step={10}
-        initialValue={imageQuality}
-        onChange={(newValue) => setImageQuality(newValue)}
-      />
-      <RangeSlider
-        label="Image Size"
-        min={10}
-        max={100}
-        step={10}
-        initialValue={imageSize} onChange={(newValue) => setImageSize(newValue)}
-      />
-      <div>
-        <button onClick={handleResize}>
-          Resize and Download
-        </button>
+    <main>
+      <h1>Resize<span>IT</span></h1>
+      <div className="drag-drop">
+        <DragAndDrop onFilesSelected={setFiles} files={files} width="30rem" height='18rem'/>
       </div>
-    </div>
+      { isCompressing && <p>Compressing...</p>}
+      { files.length > 0 && (
+        <div className="upload-settings">
+          <div className="settings">
+            <RangeSlider
+              label="Image Quality"
+              min={10}
+              max={100}
+              step={10}
+              initialValue={imageQuality}
+              onChange={(newValue) => setImageQuality(newValue)}
+              />
+            <RangeSlider
+              label="Image Size"
+              min={10}
+              max={100}
+              step={10}
+              initialValue={imageSize} onChange={(newValue) => setImageSize(newValue)}
+              />
+          </div>
+          <div>
+            <button className="primary bold large" onClick={handleResize}>
+              Resize and Download
+            </button>
+          </div>
+        </div>
+      )}
+      <FileList files={files} onRemoveFile={(index) => setFiles(files.filter((_, i) => i !== index))} />
+    </main>
   )
 }

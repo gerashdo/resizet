@@ -1,5 +1,5 @@
 import { ChangeEvent, DragEvent } from 'react'
-import { UploadLogo } from './UploadLogo';
+import { UploadLogo } from './Icons/UploadLogo';
 
 import './DragAndDrop.css'
 
@@ -33,10 +33,6 @@ const DragAndDrop = ({
     }
   }
 
-  const handleRemoveFile = (index: number) => {
-    onFilesSelected(files.filter((_, i) => i !== index))
-  }
-
   return (
     <section className="drag-drop" style={{ width: width, height: height }}>
       <div
@@ -50,7 +46,7 @@ const DragAndDrop = ({
           <div className="upload-info">
             <UploadLogo fillColor='#6dc24b' />
             <div>
-              <p>Drag and drop your files here</p>
+              <p>Drop your files here</p>
               <p>
                 Supported files: .JPG, .JPEG
               </p>
@@ -65,37 +61,24 @@ const DragAndDrop = ({
               accept=".jpg, .jpeg"
               multiple
             />
-            <label htmlFor="browse" className="browse-btn">
+            <label
+              htmlFor="browse"
+              className={`browse-btn ${files.length > 0 ? "loaded" : ""}`}
+            >
               Browse files
             </label>
           </div>
         </>
 
         {files.length > 0 && (
-          <div className="file-list">
-            <div className="file-list__container">
-              {files.map((file, index) => (
-                <div className="file-item" key={index}>
-                  <div className="file-info">
-                    <p>{file.name}</p>
-                    <p>{file.type}</p>
-                  </div>
-                  <div className="file-actions">
-                    <button onClick={() => handleRemoveFile(index)}>Remove</button>
-                    {/* <MdClear onClick={() => handleRemoveFile(index)} /> */}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {files.length > 0 && (
           <div className="success-file">
-            {/* <AiOutlineCheckCircle
-              style={{ color: "#6DC24B", marginRight: 1 }}
-            /> */}
             <p>{files.length} file(s) selected</p>
+            <button
+              onClick={() => onFilesSelected([])}
+              className="secondary"
+            >
+              Remove all
+            </button>
           </div>
         )}
       </div>

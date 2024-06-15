@@ -1,0 +1,50 @@
+
+section.file-list {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  width: 55rem;
+
+  svg {
+    width: 1.5rem;
+    aspect-ratio: 1;
+  }
+}
+
+section.file-list button.collapsible {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  text-align: start;
+  background-color: var(--color-background-dark);
+  transition: transform 0.7s ease;
+  outline: none;
+
+  &:hover {
+    background-color: var(--color-background-lighter);
+  }
+
+  span.reverse {
+    transform: rotate(180deg);
+  }
+}
+
+section.file-list ul {
+  display: none;
+  padding: 1.5rem 1rem;
+  list-style: none;
+  margin: 0;
+
+  &.active {
+    background-color: var(--color-background-light);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+    gap: 1.5rem;
+    width: calc(100% - 2rem);
+  }
+}
