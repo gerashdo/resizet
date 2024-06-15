@@ -1,0 +1,13 @@
+
+li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0rem;
+}
+
+li p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.75rem;
+  text-align: center;
+}
