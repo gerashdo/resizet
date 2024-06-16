@@ -20,8 +20,9 @@ export const ResizeScreen = () => {
   const [isCompressing, setIsCompressing] = useState<boolean>(false)
 
   const handleResize = async () => {
-    setIsCompressing(true)
+    if (imageQuality === 100 && imageSize === 100) return
 
+    setIsCompressing(true)
     const zip = new JSZip();
 
     const resizePromises = files.map((file) => resize(file))
