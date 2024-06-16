@@ -9,6 +9,7 @@
   --color-background-light: #333;
   --color-background-lighter: #444;
   --color-background-dark: #1a1a1a;
+  --color-background-darker: #121212;
 
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -27,8 +28,7 @@
 body {
   margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
+  justify-content: center;
   min-height: 100vh;
 }
 
