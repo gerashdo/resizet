@@ -1,5 +1,6 @@
 import { ChangeEvent, DragEvent } from 'react'
 import { UploadLogo } from './Icons/UploadLogo';
+import { getUniqueFiles } from '../helpers/loadFiles';
 
 import './DragAndDrop.css'
 
@@ -21,7 +22,8 @@ const DragAndDrop = ({
     const selectedFiles = event.target.files
     if (selectedFiles && selectedFiles.length > 0) {
       const newFiles = Array.from(selectedFiles)
-      onFilesSelected([...files, ...newFiles])
+      const nonDuplicateFiles = getUniqueFiles(newFiles, files)
+      onFilesSelected([...files, ...nonDuplicateFiles])
     }
   }
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
@@ -29,7 +31,8 @@ const DragAndDrop = ({
     const droppedFiles = event.dataTransfer.files
     if (droppedFiles.length > 0) {
       const newFiles = Array.from(droppedFiles)
-      onFilesSelected([...files, ...newFiles])
+      const nonDuplicateFiles = getUniqueFiles(newFiles, files)
+      onFilesSelected([...files, ...nonDuplicateFiles])
     }
   }
 
