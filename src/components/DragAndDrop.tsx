@@ -7,8 +7,8 @@ import './DragAndDrop.css'
 interface DragAndDropProps {
   onFilesSelected: (files: File[]) => void;
   files: File[]
-  width: string
-  height: string
+  width?: string
+  height?: string
 }
 
 const DragAndDrop = ({
@@ -37,7 +37,7 @@ const DragAndDrop = ({
   }
 
   return (
-    <section className="drag-drop" style={{ width: width, height: height }}>
+    <section className="drag-drop" style={ width && height ? { width: width, height: height}: {}}>
       <div
         className={`document-uploader ${
           files.length > 0 ? "upload-box active" : "upload-box"

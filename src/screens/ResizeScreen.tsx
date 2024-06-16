@@ -84,9 +84,7 @@ export const ResizeScreen = () => {
     <>
       <ResizeNav />
       <main>
-        <div className="drag-drop">
-          <DragAndDrop onFilesSelected={setFiles} files={files} width="30rem" height='18rem'/>
-        </div>
+        <DragAndDrop onFilesSelected={setFiles} files={files} />
         { isCompressing && <p>Compressing...</p>}
         { files.length > 0 && (
           <div className="upload-settings">

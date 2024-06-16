@@ -15,13 +15,6 @@ main {
       color: var(--color-primary);
     }
   }
-
-  div.drag-drop {
-    background-color: transparent;
-    border: none;
-    display: flex;
-    justify-content: center;
-  }
 }
 
 div.upload-settings {
