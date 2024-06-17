@@ -26,7 +26,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   :root {
     --color-primary: #6dc24b;
     --color-primary-dark: #4b8f2d;
@@ -39,8 +39,11 @@
     --color-background-lighter: #f0f0f0;
     --color-background-dark: #e0e0e0;
     --color-background-darker: #d0d0d0;
+
+    color: rgba(0, 0, 0, 0.87);
+    background-color: var(--color-background);
   }
-}
+} */
 
 body {
   margin: 0;
