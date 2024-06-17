@@ -23,11 +23,46 @@ div.upload-settings {
   gap: 4rem;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 div.settings {
   display: flex;
   justify-content: space-between;
-  gap: 2.5rem;
-  width: 30rem;
+  flex-direction: column;
+  gap: 1rem;
+  width: 80%;
+}
+
+div.compressing {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+
+  p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+  }
+}
+
+@media screen and (width > 600px) {
+  main {
+    div.settings {
+      flex-direction: row;
+      width: 50%;
+      gap: 2.5rem;
+    }
+  }
+}
+
+@media screen and (width > 1000px) {
+  main {
+    div.settings {
+      width: 40%;
+    }
+  }
 }

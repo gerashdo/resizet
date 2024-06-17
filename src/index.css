@@ -42,19 +42,6 @@
   }
 }
 
-@media screen and (width > 320px) {
-  :root {
-    font-size: 14px;
-  }
-}
-
-@media screen and (width >= 600px) {
-  :root {
-    font-size: 16px;
-  }
-}
-
-
 body {
   margin: 0;
   display: flex;
@@ -70,7 +57,7 @@ h1 {
 button {
   border-radius: 0.5rem;
   border: 0;
-  padding: 0.6rem 1.2rem;
+  padding: 0.8rem 1.6rem;
   font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
@@ -85,13 +72,13 @@ button {
   &.small {
     font-size: 0.8rem;
     font-weight: 400;
-    padding: 0.3rem 0.6rem;
+    padding: 0.6rem 1.2rem;
     border-radius: 0.25;
   }
 
   &.large {
     font-size: 1.2rem;
-    padding: 0.8rem 1.6rem;
+    padding: 1rem 2rem;
     border-radius: 0.75rem;
   }
 
@@ -134,5 +121,29 @@ button {
     &:active {
       border-color: var(--color-secondary-light);
     }
+  }
+}
+
+@media screen and (width > 320px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+@media screen and (width > 600px) {
+  :root {
+    font-size: 16px;
+  }
+
+  button {
+    padding: 0.6rem 1.2rem;
+  }
+
+  &.small {
+    padding: 0.3rem 0.6rem;
+  }
+
+  &.large {
+    padding: 0.8rem 1.6rem;
   }
 }

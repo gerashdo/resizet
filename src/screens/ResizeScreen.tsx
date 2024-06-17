@@ -3,6 +3,7 @@ import DragAndDrop from '../components/DragAndDrop'
 import RangeSlider from '../components/RangeSlider'
 import { ResizeNav } from '../components/ReziseNav'
 import { FileList } from '../components/FileList'
+import { Loader } from '../components/Loader'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 
@@ -77,7 +78,12 @@ export const ResizeScreen = () => {
   }
 
   if (isCompressing) {
-    return <p>Compressing...</p>
+    return (
+      <div className="compressing">
+        <Loader />
+        <p>Compressing</p>
+      </div>
+    )
   }
 
   return (

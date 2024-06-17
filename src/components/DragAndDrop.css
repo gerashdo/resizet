@@ -77,9 +77,10 @@ section.drag-drop {
   }
 
   .success-file {
-    display: flex;
     align-items: center;
     color: #6dc24b;
+    display: flex;
+    gap: 0.5rem;
     margin-top: 1rem;
 
     p {
