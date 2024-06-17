@@ -1,5 +1,8 @@
 
+import { ImageIcon } from "./Icons/Image"
+
 import "./FileItem.css"
+import { TrashIcon } from "./Icons/Trash"
 
 interface FileItemProps {
     file: File
@@ -9,11 +12,16 @@ interface FileItemProps {
 
 export const FileItem = ({ file, index, onRemoveFile}: FileItemProps) => {
   return (
-    <li>
-      <p>{file.name}</p>
-      <button className="danger small" onClick={() => onRemoveFile(index)}>
-        Remove
-      </button>
+    <li className="file-item">
+      <header>
+        <ImageIcon fillColor="#fff"/>
+        <p>{file.name}</p>
+      </header>
+      <footer className="foother">
+        <button className="danger small" onClick={() => onRemoveFile(index)}>
+          <TrashIcon fillColor="#fff" />
+        </button>
+      </footer>
     </li>
   )
 }

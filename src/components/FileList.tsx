@@ -10,7 +10,7 @@ interface FileListProps {
 }
 
 export const FileList = ({ files, onRemoveFile }: FileListProps) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState<boolean>(true)
   if (!files.length) {
     return null
   }

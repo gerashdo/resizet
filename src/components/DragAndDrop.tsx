@@ -1,13 +1,14 @@
 import { ChangeEvent, DragEvent } from 'react'
 import { UploadLogo } from './Icons/UploadLogo';
+import { getUniqueFiles } from '../helpers/loadFiles';
 
 import './DragAndDrop.css'
 
 interface DragAndDropProps {
   onFilesSelected: (files: File[]) => void;
   files: File[]
-  width: string
-  height: string
+  width?: string
+  height?: string
 }
 
 const DragAndDrop = ({
@@ -21,7 +22,8 @@ const DragAndDrop = ({
     const selectedFiles = event.target.files
     if (selectedFiles && selectedFiles.length > 0) {
       const newFiles = Array.from(selectedFiles)
-      onFilesSelected([...files, ...newFiles])
+      const nonDuplicateFiles = getUniqueFiles(newFiles, files)
+      onFilesSelected([...files, ...nonDuplicateFiles])
     }
   }
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
@@ -29,12 +31,13 @@ const DragAndDrop = ({
     const droppedFiles = event.dataTransfer.files
     if (droppedFiles.length > 0) {
       const newFiles = Array.from(droppedFiles)
-      onFilesSelected([...files, ...newFiles])
+      const nonDuplicateFiles = getUniqueFiles(newFiles, files)
+      onFilesSelected([...files, ...nonDuplicateFiles])
     }
   }
 
   return (
-    <section className="drag-drop" style={{ width: width, height: height }}>
+    <section className="drag-drop" style={ width && height ? { width: width, height: height}: {}}>
       <div
         className={`document-uploader ${
           files.length > 0 ? "upload-box active" : "upload-box"
