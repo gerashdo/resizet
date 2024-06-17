@@ -1,0 +1,50 @@
+
+li.file-item {
+  background-color: var(--color-background-lighter);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: space-between;
+  min-height: 3.5rem;
+  padding: 0.7rem;
+  border-radius: 2.5%;
+  box-shadow: 0px 0.5rem 0.8rem -0.3rem rgba(0,0,0,0.1);
+
+  header {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  header svg {
+    width: 2.5rem;
+    aspect-ratio: 1;
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  button svg {
+    width: 1rem;
+    aspect-ratio: 1;
+    border-color: var(--color-primary);
+  }
+}
+
+@media screen and (width > 600px){
+  li.file-item {
+    min-height: 7rem;
+    padding: 1rem;
+    border-radius: 5%;
+  }
+}
