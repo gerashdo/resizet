@@ -4,6 +4,8 @@ import RangeSlider from '../components/RangeSlider'
 import { ResizeNav } from '../components/ReziseNav'
 import { FileList } from '../components/FileList'
 import { Loader } from '../components/Loader'
+import { LoadInfo } from '../components/LoadInfo'
+import { SectionContainer } from '../components/SectionContainer'
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
 
@@ -90,35 +92,41 @@ export const ResizeScreen = () => {
     <>
       <ResizeNav />
       <main>
-        <DragAndDrop onFilesSelected={setFiles} files={files} />
-        { isCompressing && <p>Compressing...</p>}
-        { files.length > 0 && (
-          <div className="upload-settings">
-            <div className="settings">
-              <RangeSlider
-                label="Image Quality"
-                min={10}
-                max={100}
-                step={10}
-                initialValue={imageQuality}
-                onChange={(newValue) => setImageQuality(newValue)}
+        <SectionContainer>
+          <DragAndDrop onFilesSelected={setFiles} files={files} />
+          <LoadInfo filesCount={files.length} onClearFiles={() => setFiles([])} />
+          { files.length > 0 && (
+            <>
+              <div className="upload-settings">
+                <RangeSlider
+                  label="Image Quality"
+                  min={10}
+                  max={100}
+                  step={10}
+                  initialValue={imageQuality}
+                  onChange={(newValue) => setImageQuality(newValue)}
                 />
-              <RangeSlider
-                label="Image Size"
-                min={10}
-                max={100}
-                step={10}
-                initialValue={imageSize} onChange={(newValue) => setImageSize(newValue)}
+                <RangeSlider
+                  label="Image Size"
+                  min={10}
+                  max={100}
+                  step={10}
+                  initialValue={imageSize} onChange={(newValue) => setImageSize(newValue)}
                 />
-            </div>
-            <div>
+              </div>
               <button className="primary bold large" onClick={handleResize}>
                 Resize and Download
               </button>
-            </div>
-          </div>
-        )}
-        <FileList files={files} onRemoveFile={(index) => setFiles(files.filter((_, i) => i !== index))} />
+            </>
+          )}
+        </SectionContainer>
+        {
+          files.length > 0 && (
+            <SectionContainer>
+              <FileList files={files} onRemoveFile={(index) => setFiles(files.filter((_, i) => i !== index))} />
+            </SectionContainer>
+          )
+        }
       </main>
     </>
   )

@@ -1,8 +1,7 @@
 section.drag-drop {
-  background: var(--color-background-light);
   border: 0.0625rem solid var(--color-background-lighter);
   border-radius: 8px;
-  width: 80%;
+  width: 100%;
   height: 18rem;
 }
 
@@ -47,77 +46,11 @@ section.drag-drop {
     }
   }
 
-  .browse-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    margin-top: 0.5rem;
-    border-radius: 0.5rem;
+  .browse {
     cursor: pointer;
-    background-color: var(--color-primary);
-    transition: all 0.25s ease;
-    &:hover {
-      background-color: var(--color-primary-dark);
-    }
-    &:active {
-      background-color: var(--color-primary-light);
-    }
-
-    &.loaded {
-      background-color: transparent;
-      border: 0.0625rem solid var(--color-primary);
-      &:hover {
-        border-color: #4b8f2d;
-      }
-      &:active {
-        border-color: #8edc6b;
-      }
-    }
-  }
-
-  .success-file {
-    align-items: center;
-    color: #6dc24b;
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1rem;
-
-    p {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: bold;
-    }
   }
 
   input[type="file"] {
     display: none;
-  }
-}
-
-@media screen and (width > 320px) {
-  section.drag-drop {
-    width: 80%;
-  }
-}
-
-@media screen and (width > 600px) {
-  section.drag-drop {
-    width: 50%;
-  }
-}
-
-@media screen and (width > 1000px) {
-  section.drag-drop {
-    width: 40%;
-  }
-
-  .document-uploader {
-    .success-file {
-      gap: 1rem;
-      p {
-        font-size: 1.5rem;
-      }
-    }
   }
 }
