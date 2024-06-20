@@ -55,7 +55,7 @@ const DragAndDrop = ({
               </p>
             </div>
           </div>
-          <div>
+          <div className={`button ${files.length > 0 ? "secondary" : "primary"}`}>
             <input
               type="file"
               hidden
@@ -66,24 +66,12 @@ const DragAndDrop = ({
             />
             <label
               htmlFor="browse"
-              className={`browse-btn ${files.length > 0 ? "loaded" : ""}`}
+              className="browse"
             >
               Browse files
             </label>
           </div>
         </>
-
-        {files.length > 0 && (
-          <div className="success-file">
-            <p>{files.length} file(s) selected</p>
-            <button
-              onClick={() => onFilesSelected([])}
-              className="secondary"
-            >
-              Remove all
-            </button>
-          </div>
-        )}
       </div>
     </section>
   )

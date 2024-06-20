@@ -1,0 +1,16 @@
+
+section.section-container {
+  background-color: var(--color-background-light);
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  width: min(45rem, 70%);
+}
+
+@media screen and (width > 600px) {
+  section.section-container {
+    width: min(45rem, 80%);
+  }
+}

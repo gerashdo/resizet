@@ -30,14 +30,14 @@ const RangeSlider: React.FC<SliderProps> = ({ label, min, max, step, initialValu
           value={initialValue}
           onChange={handleInputChange}
         />
+      </div>
+      <div className="slider-labels">
+        <span>{min}</span>
         <span
           className="tooltip"
           >
           {initialValue}%
         </span>
-      </div>
-      <div className="slider-labels">
-        <span>{min}</span>
         <span>{max}</span>
       </div>
     </div>

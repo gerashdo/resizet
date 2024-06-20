@@ -2,12 +2,12 @@
   --color-primary: #6dc24b;
   --color-primary-dark: #4b8f2d;
   --color-primary-light: #8ae68a;
-  --color-secondary: #d44;
-  --color-secondary-dark: #b22;
-  --color-secondary-light: #f66;
-  --color-background: #242424;
-  --color-background-light: #333;
-  --color-background-lighter: #444;
+  --color-danger: #d44;
+  --color-danger-dark: #b22;
+  --color-danger-light: #f66;
+  --color-background: rgb(23 23 23);
+  --color-background-light: rgb(38 38 38);
+  --color-background-lighter: rgb(64 64 64);
   --color-background-dark: #1a1a1a;
   --color-background-darker: #121212;
 
@@ -57,7 +57,7 @@ h1 {
   line-height: 1.1;
 }
 
-button {
+button, .button {
   border-radius: 0.5rem;
   border: 0;
   padding: 0.8rem 1.6rem;
@@ -65,8 +65,7 @@ button {
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: background-color 0.25s ease;
-  transition: border-color 0.25s ease;
+  transition: all 0.25s ease;
 
   &.bold {
     font-weight: bold;
@@ -75,7 +74,7 @@ button {
   &.small {
     font-size: 0.8rem;
     font-weight: 400;
-    padding: 0.6rem 1.2rem;
+    padding: 0.5rem 1rem;
     border-radius: 0.25;
   }
 
@@ -83,6 +82,10 @@ button {
     font-size: 1.2rem;
     padding: 1rem 2rem;
     border-radius: 0.75rem;
+  }
+
+  &.extended {
+    width: 100%;
   }
 
   &.primary {
@@ -100,29 +103,30 @@ button {
 
   &.secondary {
     background-color: transparent;
-    color: #fff;
+    color: var(--color-primary);
     border: solid 0.125rem transparent;
 
     &:hover {
-      border-color: var(--color-background-lighter);
+      border-color: var(--color-primary);
     }
 
     &:active {
-      border-color: var(--color-background-dark);
+      border-color: var(--color-primary-light);
     }
   }
 
   &.danger {
-    border: solid 0.1rem var(--color-secondary);
+    border: none;
     background-color: transparent;
-    color: #fff;
+    border: solid 0.125rem transparent;
+    color: var(--color-danger);
 
     &:hover {
-      border-color: var(--color-secondary-dark);
+      border-color: var(--color-danger);
     }
 
     &:active {
-      border-color: var(--color-secondary-light);
+      border-color: var(--color-danger-light);
     }
   }
 }

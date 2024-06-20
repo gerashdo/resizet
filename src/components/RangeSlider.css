@@ -1,17 +1,30 @@
 .slider-container {
   margin: 0;
   width: 100%;
-}
 
-.slider-labels {
-  display: flex;
-  font-size: 0.7rem;
-  justify-content: space-between;
-}
+  .slider-labels {
+    display: flex;
+    font-size: 0.7rem;
+    justify-content: space-between;
+    margin: 0.5rem 0;
 
-.slider-container label.title {
-  font-size: 1rem;
-  font-weight: bold;
+    span.tooltip {
+      font-weight: bold;
+      font-size: 0.7rem;
+      background-color: var(--color-background-lighter);
+      color: #fff;
+      padding: 0.125rem 0.5rem;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+  }
+
+  label.title {
+    position: relative;
+    font-size: 1rem;
+    font-weight: bold;
+    bottom: 0.5rem;
+  }
 }
 
 .slider-wrapper {
@@ -29,7 +42,7 @@ input[type="range"] {
 
 input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
-  height: 0.2rem;
+  height: 0.4rem;
   background: #ddd;
   position: relative;
   top: -0.4rem;
@@ -37,26 +50,26 @@ input[type="range"]::-webkit-slider-runnable-track {
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.8rem;
+  height: 1.8rem;
   background: var(--color-primary);
   border-color: var(--color-primary);
   border-radius: 50%;
   cursor: grab;
   position: relative;
-  top: -0.5rem;
+  top: -0.7rem;
   z-index: 2;
 }
 
 input[type="range"]::-moz-range-track {
   width: 100%;
-  height: 0.2rem;
+  height: 0.4rem;
   background: #ddd;
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.8rem;
+  height: 1.8rem;
   background: var(--color-primary);
   border-color: var(--color-primary);
   border-radius: 50%;
@@ -65,16 +78,34 @@ input[type="range"]::-moz-range-thumb {
   z-index: 2;
 }
 
-span.tooltip {
-  position: absolute;
-  font-weight: bold;
-  font-size: 0.7rem;
-  top: 1.5rem;
-  left: 48%;
-  background-color: var(--color-background-lighter);
-  color: #fff;
-  padding: 0.125rem 0.5rem;
-  border-radius: 5px;
-  transform: translateX(-50%);
-  white-space: nowrap;
+@media screen and (min-width: 600px) {
+  .slider-container {
+    .slider-labels {
+      margin: 0;
+    }
+
+    label.title {
+      position: inherit;
+    }
+  }
+
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 0.2rem;
+  }
+
+  input[type="range"]::-moz-range-track {
+    height: 0.2rem;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    width: 1.2rem;
+    height: 1.2rem;
+    top: -0.5rem;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
 }
