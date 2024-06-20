@@ -1,50 +1,49 @@
 
 li.file-item {
+  align-items: center;
   background-color: var(--color-background-lighter);
+  border-radius: 0.75rem;
   display: flex;
-  flex-direction: column;
+  gap: 1rem;
   justify-content: space-between;
-  align-items: space-between;
   min-height: 3.5rem;
-  padding: 0.7rem;
-  border-radius: 2.5%;
-  box-shadow: 0px 0.5rem 0.8rem -0.3rem rgba(0,0,0,0.1);
+  padding: 0.75rem 1rem;
 
-  header {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  header svg {
+  svg {
     width: 2.5rem;
     aspect-ratio: 1;
     margin: 0;
   }
 
-  p {
-    margin: 0;
-    font-size: 0.75rem;
-    text-align: center;
-  }
+  header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 
-  button {
-    width: 100%;
-    margin-top: 1rem;
+    p {
+      margin: 0;
+      font-size: 1.125rem;
+      text-align: center;
+    }
   }
 
   button svg {
-    width: 1rem;
+    width: 1.125rem;
     aspect-ratio: 1;
     border-color: var(--color-primary);
   }
 }
 
-@media screen and (width > 600px){
+@media screen and (width > 600px) {
   li.file-item {
-    min-height: 7rem;
-    padding: 1rem;
-    border-radius: 5%;
+    header {
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    svg {
+      width: 2rem;
+    }
   }
 }

@@ -14,14 +14,12 @@ export const FileItem = ({ file, index, onRemoveFile}: FileItemProps) => {
   return (
     <li className="file-item">
       <header>
-        <ImageIcon fillColor="#fff"/>
+        <ImageIcon fillColor="rgb(115 115 115)"/>
         <p>{file.name}</p>
       </header>
-      <footer className="foother">
-        <button className="danger small" onClick={() => onRemoveFile(index)}>
-          <TrashIcon fillColor="#fff" />
-        </button>
-      </footer>
+      <button className="danger small" onClick={() => onRemoveFile(index)}>
+        <TrashIcon fillColor="#d44" />
+      </button>
     </li>
   )
 }

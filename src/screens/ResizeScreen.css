@@ -20,18 +20,10 @@ main {
 div.upload-settings {
   display: flex;
   flex-direction: column;
-  gap: 4rem;
+  gap: 2rem;
   justify-content: center;
   align-items: center;
   width: 100%;
-}
-
-div.settings {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  gap: 1rem;
-  width: 80%;
 }
 
 div.compressing {
@@ -51,10 +43,9 @@ div.compressing {
 
 @media screen and (width > 600px) {
   main {
-    div.settings {
+    div.upload-settings {
       flex-direction: row;
-      width: 50%;
-      gap: 2.5rem;
+      gap: 4rem;
     }
   }
 }

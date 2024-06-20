@@ -1,8 +1,6 @@
-import { useState } from 'react'
+import { FileItem } from './FIleItem'
 
 import './FileList.css'
-import { FileItem } from './FIleItem'
-import { ArrowIcon } from './Icons/Arrow'
 
 interface FileListProps {
   files: File[]
@@ -10,22 +8,14 @@ interface FileListProps {
 }
 
 export const FileList = ({ files, onRemoveFile }: FileListProps) => {
-  const [open, setOpen] = useState<boolean>(true)
   if (!files.length) {
     return null
   }
+
   return (
     <section className='file-list'>
-      <button
-        className="collapsible"
-        onClick={() => setOpen(!open)}
-      >
-        <span>Files list</span>
-        <span className={`${open ? 'reverse' : ''}`}>
-          <ArrowIcon fillColor='#fff' />
-        </span>
-      </button>
-      <ul className={`${open ? 'active' : ''}`}>
+      <h2>Files list</h2>
+      <ul>
         {files.map((file, index) => (
           <FileItem key={index} file={file} index={index} onRemoveFile={onRemoveFile} />
         ))}
