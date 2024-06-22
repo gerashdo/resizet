@@ -23,16 +23,18 @@ export const ResizeScreen = () => {
   const [imageQuality, setImageQuality] = useState<number>(100)
   const [imageSize, setImageSize] = useState<number>(100)
   const [anchorObjects, setAnchorObjects] = useState<AnchorObject[]>([])
+  const [progress, setProgress] = useState<number>(0)
+  const [progressConstant, setProgressConstant] = useState<number>(0)
 
   useEffect(() => {
     if (files.length > 0) {
       setPhase(ResizeState.LOADED)
+      setProgressConstant(Math.floor(80 / files.length))
     }
   }, [files])
 
   const handleResize = async () => {
     if (imageQuality === 100 && imageSize === 100) return
-
     setPhase(ResizeState.COMPRESSING)
 
     const resizePromises = files.map((file) => resize(file))
@@ -45,12 +47,14 @@ export const ResizeScreen = () => {
       setPhase(ResizeState.LOADED)
       return
     }
-
+    setProgress(90)
     const successImages = getSuccessImages(resizedImages)
     setAnchorObjects(getImagesAsAnchor(successImages))
+    setProgress(100)
 
     setFiles([])
     setPhase(ResizeState.COMPRESSED)
+    setProgress(0)
   }
 
   const resize = (file: File): Promise<FileWithBlob> => {
@@ -75,6 +79,7 @@ export const ResizeScreen = () => {
         }else{
           reject({error: 'Error resizing image', name: file.name})
         }
+        setProgress((prev) => prev + progressConstant)
       }
       image.onerror = () => {
         reject({error: 'Error loading image', name: file.name})
@@ -96,6 +101,7 @@ export const ResizeScreen = () => {
     return (
       <div className="compressing">
         <Loader />
+        <h2>{progress}%</h2>
         <p>Resizing</p>
       </div>
     )
