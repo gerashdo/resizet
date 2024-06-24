@@ -7,15 +7,13 @@ import { Loader } from '../components/Loader'
 import { LoadInfo } from '../components/LoadInfo'
 import { SectionContainer } from '../components/SectionContainer'
 import { ResizedImagesList } from '../components/ResizedImagesList'
-import { createDowndloadZip, getImagesAsAnchor } from '../helpers/resizeFiles'
+import { useResizeImagesWithWorker } from '../hooks/useResizeImagesWithWorker'
+import { createDowndloadZip, getImagesAsAnchor } from '../helpers/resizeFiles';
 
-import { AnchorObject, ErrorWithMessage, ResizeState } from '../types'
+import { AnchorObject, FileWithBlob, ResizeState } from '../types'
 import './ResizeScreen.css'
 
-export interface FileWithBlob {
-  blob: Blob
-  name: string
-}
+
 
 // Importar el Worker
 import ImageWorker from '../webworkers/imageWorker?worker'
@@ -31,6 +29,19 @@ export const ResizeScreen = () => {
 
   const worker = useMemo(() => new ImageWorker(), [])
 
+  const { startResize } = useResizeImagesWithWorker({
+    worker,
+    setProgress,
+    files,
+    progressConstant
+  })
+
+  useEffect(() => {
+    return () => {
+      worker.terminate()
+    }
+  }, [worker])
+
   useEffect(() => {
     if (files.length > 0) {
       setPhase(ResizeState.LOADED)
@@ -41,42 +52,13 @@ export const ResizeScreen = () => {
   const handleResize = async () => {
     if (imageQuality === 100 && imageSize === 100) return
     setPhase(ResizeState.COMPRESSING)
-
-    const resizedImages: FileWithBlob[] = []
-    let completed = 0
-
-    for (const file of files) {
-      const resizedImage = await resizeImageWithWorker(file, imageQuality, imageSize)
-      if ('error' in resizedImage) {
-        console.error(`Error resizing image ${file.name}: ${resizedImage.error}`)
-      } else {
-        resizedImages.push(resizedImage)
-      }
-      completed += 1
-      setProgress((prev) => prev + progressConstant)
-
-      if (completed === files.length) {
-        setProgress(90)
-        setAnchorObjects(getImagesAsAnchor(resizedImages))
-        setProgress(100)
-        setFiles([])
-        setPhase(ResizeState.COMPRESSED)
-        setProgress(0)
-      }
-    }
-  }
-
-  const resizeImageWithWorker = (file: File, imageQuality: number, imageSize: number): Promise<FileWithBlob | ErrorWithMessage> => {
-    return new Promise((resolve) => {
-      const { port1, port2 } = new MessageChannel()
-
-      port2.onmessage = (event: MessageEvent<FileWithBlob | ErrorWithMessage>) => {
-        resolve(event.data)
-        port2.close()
-      }
-
-      worker.postMessage({ port: port1, file, imageQuality, imageSize }, [port1])
-    })
+    const resizedImages: FileWithBlob[] = await startResize(imageQuality, imageSize)
+    setProgress(90)
+    setAnchorObjects(getImagesAsAnchor(resizedImages))
+    setProgress(100)
+    setFiles([])
+    setPhase(ResizeState.COMPRESSED)
+    setProgress(0)
   }
 
   const handleOnDownloadAll = () => {

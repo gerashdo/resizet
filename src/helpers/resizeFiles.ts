@@ -1,8 +1,7 @@
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { FileWithBlob } from "../screens/ResizeScreen"
 
-import { AnchorObject } from '../types'
+import { AnchorObject, FileWithBlob } from '../types'
 import { getErrorMessage } from './utils'
 
 export const getFailedImages = (resizedImages: PromiseSettledResult<FileWithBlob>[]) => {
