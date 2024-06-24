@@ -17,13 +17,15 @@ export const useResizeImagesWithWorker = ({
   const startResize = async ( imageQuality: number, imageSize: number) => {
     if (!window.Worker) {
       console.error('Web Workers are not supported in this browser')
-      return []
+      return
     }
     const resizedImages: FileWithBlob[] = []
+    const errorImagesNames: string[] = []
 
     for (const file of files) {
       const resizedImage = await resizeImageWithWorker(file, imageQuality, imageSize)
       if ('error' in resizedImage) {
+        errorImagesNames.push(file.name)
         console.error(`Error resizing image ${file.name}: ${resizedImage.error}`)
       } else {
         resizedImages.push(resizedImage)
@@ -31,7 +33,7 @@ export const useResizeImagesWithWorker = ({
       setProgress((prev) => prev + progressConstant)
     }
 
-    return resizedImages
+    return [resizedImages, errorImagesNames] as const
   }
 
   const resizeImageWithWorker = (file: File, imageQuality: number, imageSize: number): Promise<FileWithBlob | ErrorWithMessage> => {
