@@ -26,21 +26,6 @@ div.upload-settings {
   width: 100%;
 }
 
-div.compressing {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  height: 100vh;
-  align-items: center;
-  justify-content: center;
-
-  p {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 0;
-  }
-}
-
 @media screen and (width > 600px) {
   main {
     div.upload-settings {

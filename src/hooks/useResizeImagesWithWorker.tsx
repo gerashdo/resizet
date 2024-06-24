@@ -15,6 +15,10 @@ export const useResizeImagesWithWorker = ({
   progressConstant
 }: UseResizeImagesWithWorkerProps) => {
   const startResize = async ( imageQuality: number, imageSize: number) => {
+    if (!window.Worker) {
+      console.error('Web Workers are not supported in this browser')
+      return []
+    }
     const resizedImages: FileWithBlob[] = []
 
     for (const file of files) {

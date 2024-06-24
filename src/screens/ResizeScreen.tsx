@@ -3,8 +3,8 @@ import DragAndDrop from '../components/DragAndDrop'
 import RangeSlider from '../components/RangeSlider'
 import { ResizeNav } from '../components/ReziseNav'
 import { FileList } from '../components/FileList'
-import { Loader } from '../components/Loader'
 import { LoadInfo } from '../components/LoadInfo'
+import { ProgressLoading } from '../components/ProgressLoading'
 import { SectionContainer } from '../components/SectionContainer'
 import { ResizedImagesList } from '../components/ResizedImagesList'
 import { useResizeImagesWithWorker } from '../hooks/useResizeImagesWithWorker'
@@ -12,8 +12,6 @@ import { createDowndloadZip, getImagesAsAnchor } from '../helpers/resizeFiles';
 
 import { AnchorObject, FileWithBlob, ResizeState } from '../types'
 import './ResizeScreen.css'
-
-
 
 // Importar el Worker
 import ImageWorker from '../webworkers/imageWorker?worker'
@@ -56,6 +54,8 @@ export const ResizeScreen = () => {
     setProgress(90)
     setAnchorObjects(getImagesAsAnchor(resizedImages))
     setProgress(100)
+    if ( anchorObjects.length === 0 ) return setPhase(ResizeState.TO_LOAD)
+
     setFiles([])
     setPhase(ResizeState.COMPRESSED)
     setProgress(0)
@@ -71,13 +71,7 @@ export const ResizeScreen = () => {
   }
 
   if (phase === ResizeState.COMPRESSING) {
-    return (
-      <div className="compressing">
-        <Loader />
-        <h2>{progress.toFixed(1)}%</h2>
-        <p>Resizing</p>
-      </div>
-    )
+    return (<ProgressLoading progress={progress} />)
   }
 
   return (
