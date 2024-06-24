@@ -1,8 +1,8 @@
 import JSZip from 'jszip'
 import { saveAs } from 'file-saver'
-import { FileWithBlob } from "../screens/ResizeScreen"
 
-import { AnchorObject } from '../types'
+import { AnchorObject, FileWithBlob } from '../types'
+import { getErrorMessage } from './utils'
 
 export const getFailedImages = (resizedImages: PromiseSettledResult<FileWithBlob>[]) => {
   return resizedImages.filter((result) => result.status === 'rejected')
@@ -29,10 +29,33 @@ export const createDowndloadZip = (files: AnchorObject[], fileName: string) => {
   });
 }
 
-export const getImagesAsAnchor = (files: FileWithBlob[]) => {
+export const getImagesAsAnchor = (files: FileWithBlob[]): AnchorObject[] => {
   return files.map((file) => {
     const { blob, name } = file
     const url = URL.createObjectURL(blob)
     return { url, name, blob }
   })
 }
+
+export const resizeImage = async (file: File, imageQuality: number, imageSize: number): Promise<FileWithBlob> => {
+  const imageBitmap = await createImageBitmap(file);
+  const offScreenCanvas = new OffscreenCanvas(imageBitmap.width * (imageSize / 100), imageBitmap.height * (imageSize / 100));
+  const ctx = offScreenCanvas.getContext('2d');
+
+  if (!ctx) {
+    throw new Error('Error resizing image');
+  }
+
+  ctx.drawImage(imageBitmap, 0, 0, offScreenCanvas.width, offScreenCanvas.height);
+
+  return new Promise<{ blob: Blob; name: string }>((resolve, reject) => {
+    offScreenCanvas.convertToBlob({ type: 'image/jpeg', quality: imageQuality / 100 }).then(blob => {
+      resolve({ blob, name: file.name });
+    }).catch(err => {
+      const message = getErrorMessage(err);
+      reject(new Error(message));
+    });
+  });
+};
+
+
