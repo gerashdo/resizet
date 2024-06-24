@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import DragAndDrop from '../components/DragAndDrop'
 import RangeSlider from '../components/RangeSlider'
 import { ResizeNav } from '../components/ReziseNav'
@@ -62,6 +63,7 @@ export const ResizeScreen = () => {
 
   const handleOnDownloadAll = () => {
     createDowndloadZip(anchorObjects, 'resized_images.zip')
+    toast.success('The images are being downloaded')
   }
 
   const handleOnClear = () => {
