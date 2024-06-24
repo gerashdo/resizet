@@ -10,3 +10,7 @@ export enum ResizeState {
   COMPRESSING = 'COMPRESSING',
   COMPRESSED = 'COMPRESSED',
 }
+
+export type ErrorWithMessage = {
+  error: string
+}

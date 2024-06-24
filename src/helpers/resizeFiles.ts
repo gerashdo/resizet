@@ -3,6 +3,7 @@ import { saveAs } from 'file-saver'
 import { FileWithBlob } from "../screens/ResizeScreen"
 
 import { AnchorObject } from '../types'
+import { getErrorMessage } from './utils'
 
 export const getFailedImages = (resizedImages: PromiseSettledResult<FileWithBlob>[]) => {
   return resizedImages.filter((result) => result.status === 'rejected')
@@ -52,7 +53,8 @@ export const resizeImage = async (file: File, imageQuality: number, imageSize: n
     offScreenCanvas.convertToBlob({ type: 'image/jpeg', quality: imageQuality / 100 }).then(blob => {
       resolve({ blob, name: file.name });
     }).catch(err => {
-      reject(new Error('Error creating blob'));
+      const message = getErrorMessage(err);
+      reject(new Error(message));
     });
   });
 };

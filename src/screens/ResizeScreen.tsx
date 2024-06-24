@@ -9,7 +9,7 @@ import { SectionContainer } from '../components/SectionContainer'
 import { ResizedImagesList } from '../components/ResizedImagesList'
 import { createDowndloadZip, getImagesAsAnchor } from '../helpers/resizeFiles'
 
-import { AnchorObject, ResizeState } from '../types'
+import { AnchorObject, ErrorWithMessage, ResizeState } from '../types'
 import './ResizeScreen.css'
 
 export interface FileWithBlob {
@@ -47,7 +47,7 @@ export const ResizeScreen = () => {
 
     for (const file of files) {
       const resizedImage = await resizeImageWithWorker(file, imageQuality, imageSize)
-      if (resizedImage.error) {
+      if ('error' in resizedImage) {
         console.error(`Error resizing image ${file.name}: ${resizedImage.error}`)
       } else {
         resizedImages.push(resizedImage)
@@ -66,11 +66,11 @@ export const ResizeScreen = () => {
     }
   }
 
-  const resizeImageWithWorker = (file: File, imageQuality: number, imageSize: number): Promise<FileWithBlob> => {
+  const resizeImageWithWorker = (file: File, imageQuality: number, imageSize: number): Promise<FileWithBlob | ErrorWithMessage> => {
     return new Promise((resolve) => {
       const { port1, port2 } = new MessageChannel()
 
-      port2.onmessage = (event) => {
+      port2.onmessage = (event: MessageEvent<FileWithBlob | ErrorWithMessage>) => {
         resolve(event.data)
         port2.close()
       }

@@ -1,4 +1,5 @@
 import { resizeImage } from '../helpers/resizeFiles';
+import { getErrorMessage } from '../helpers/utils';
 
 self.addEventListener('message', async (event) => {
   const { file, imageQuality, imageSize, port } = event.data;
@@ -7,6 +8,7 @@ self.addEventListener('message', async (event) => {
     const resizedImage = await resizeImage(file, imageQuality, imageSize);
     port.postMessage(resizedImage);
   } catch (error) {
-    port.postMessage({ error: error.message });
+    const message = getErrorMessage(error);
+    port.postMessage({ error: message });
   }
 });
