@@ -36,3 +36,25 @@ export const getImagesAsAnchor = (files: FileWithBlob[]) => {
     return { url, name, blob }
   })
 }
+
+export const resizeImage = async (file: File, imageQuality: number, imageSize: number): Promise<FileWithBlob> => {
+  const imageBitmap = await createImageBitmap(file);
+  const offScreenCanvas = new OffscreenCanvas(imageBitmap.width * (imageSize / 100), imageBitmap.height * (imageSize / 100));
+  const ctx = offScreenCanvas.getContext('2d');
+
+  if (!ctx) {
+    throw new Error('Error resizing image');
+  }
+
+  ctx.drawImage(imageBitmap, 0, 0, offScreenCanvas.width, offScreenCanvas.height);
+
+  return new Promise<{ blob: Blob; name: string }>((resolve, reject) => {
+    offScreenCanvas.convertToBlob({ type: 'image/jpeg', quality: imageQuality / 100 }).then(blob => {
+      resolve({ blob, name: file.name });
+    }).catch(err => {
+      reject(new Error('Error creating blob'));
+    });
+  });
+};
+
+
