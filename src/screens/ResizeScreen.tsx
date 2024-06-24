@@ -49,16 +49,15 @@ export const ResizeScreen = () => {
 
   const handleResize = async () => {
     if (imageQuality === 100 && imageSize === 100) return
+    setProgress(0)
     setPhase(ResizeState.COMPRESSING)
     const resizedImages: FileWithBlob[] = await startResize(imageQuality, imageSize)
     setProgress(90)
+    if ( resizedImages.length === 0 ) return setPhase(ResizeState.TO_LOAD)
     setAnchorObjects(getImagesAsAnchor(resizedImages))
     setProgress(100)
-    if ( anchorObjects.length === 0 ) return setPhase(ResizeState.TO_LOAD)
-
     setFiles([])
     setPhase(ResizeState.COMPRESSED)
-    setProgress(0)
   }
 
   const handleOnDownloadAll = () => {

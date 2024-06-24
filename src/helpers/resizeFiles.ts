@@ -29,7 +29,7 @@ export const createDowndloadZip = (files: AnchorObject[], fileName: string) => {
   });
 }
 
-export const getImagesAsAnchor = (files: FileWithBlob[]) => {
+export const getImagesAsAnchor = (files: FileWithBlob[]): AnchorObject[] => {
   return files.map((file) => {
     const { blob, name } = file
     const url = URL.createObjectURL(blob)
