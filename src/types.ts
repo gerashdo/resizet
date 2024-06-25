@@ -4,6 +4,11 @@ export type AnchorObject = {
   blob: Blob
 }
 
+export type UploadFile = {
+  file: File
+  url: string
+}
+
 export interface FileWithBlob {
   blob: Blob
   name: string
