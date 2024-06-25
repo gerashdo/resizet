@@ -10,16 +10,16 @@ import { SectionContainer } from '../components/SectionContainer'
 import { ResizedImagesList } from '../components/ResizedImagesList'
 import { useResizeImagesWithWorker } from '../hooks/useResizeImagesWithWorker'
 import { createDowndloadZip, getImagesAsAnchor } from '../helpers/resizeFiles';
+import { getFailedImageNamesMessage } from '../helpers/utils'
 
-import { AnchorObject, ResizeState } from '../types'
+import { AnchorObject, ResizeState, UploadFile } from '../types'
 import './ResizeScreen.css'
 
 // Importar el Worker
 import ImageWorker from '../webworkers/imageWorker?worker'
-import { getFailedImageNamesMessage } from '../helpers/utils'
 
 export const ResizeScreen = () => {
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<UploadFile[]>([])
   const [phase, setPhase] = useState<ResizeState>(ResizeState.TO_LOAD)
   const [imageQuality, setImageQuality] = useState<number>(100)
   const [imageSize, setImageSize] = useState<number>(100)
@@ -28,11 +28,12 @@ export const ResizeScreen = () => {
   const [progressConstant, setProgressConstant] = useState<number>(0)
 
   const worker = useMemo(() => new ImageWorker(), [])
+  const filesFile = files.map(file => file.file)
 
   const { startResize } = useResizeImagesWithWorker({
     worker,
     setProgress,
-    files,
+    files: filesFile,
     progressConstant
   })
 
@@ -81,6 +82,10 @@ export const ResizeScreen = () => {
     setPhase(ResizeState.TO_LOAD)
   }
 
+  const handleUploadFiles = (newFiles: File[]) => {
+    setFiles(prevFiles => [...prevFiles, ...newFiles.map(file => ({ file, url: URL.createObjectURL(file) }))])
+  }
+
   if (phase === ResizeState.COMPRESSING) {
     return (<ProgressLoading progress={progress} />)
   }
@@ -91,7 +96,7 @@ export const ResizeScreen = () => {
       <main>
         {(phase === ResizeState.TO_LOAD || phase === ResizeState.LOADED) && (
           <SectionContainer>
-            <DragAndDrop onFilesSelected={setFiles} files={files} />
+            <DragAndDrop onFilesSelected={handleUploadFiles} files={files.map(file => file.file)} />
             <LoadInfo filesCount={files.length} onClearFiles={() => setFiles([])} />
             {files.length > 0 && phase === ResizeState.LOADED && (
               <>
@@ -121,7 +126,11 @@ export const ResizeScreen = () => {
         )}
         {files.length > 0 && phase === ResizeState.LOADED && (
           <SectionContainer>
-            <FileList files={files} onRemoveFile={(index) => setFiles(files.filter((_, i) => i !== index))} />
+            <FileList
+              title='Files to resize'
+              files={files}
+              onRemoveFile={(index) => setFiles(files.filter((_, i) => i !== index))}
+            />
           </SectionContainer>
         )}
         {anchorObjects.length > 0 && phase === ResizeState.COMPRESSED && (

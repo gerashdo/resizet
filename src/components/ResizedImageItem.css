@@ -14,11 +14,14 @@ li.resized-item {
     gap: 1rem;
     justify-content: center;
     align-items: center;
+    width: 100%;
 
-    svg {
-      width: 2.5rem;
+    img {
       aspect-ratio: 1;
+      border-radius: 0.5rem;
       margin: 0;
+      object-fit: cover;
+      width: 100%;
     }
 
     p {
@@ -26,5 +29,20 @@ li.resized-item {
       font-size: 1.125rem;
       text-align: center;
     }
+  }
+
+  a {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    text-decoration: none;
+    width: calc(100% - 2rem);
+  }
+
+  a svg {
+    width: 1.125rem;
+    aspect-ratio: 1;
+    border-color: var(--color-primary);
   }
 }
