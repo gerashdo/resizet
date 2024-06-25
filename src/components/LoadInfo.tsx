@@ -10,7 +10,7 @@ export const LoadInfo = ({filesCount, onClearFiles}: LoadInfoProps) => {
   if (filesCount === 0) return null
   return (
     <div className="success-file">
-      <p>{filesCount} file(s) selected</p>
+      <p>{filesCount} file{ filesCount > 1 && 's'} selected</p>
       <button
         onClick={onClearFiles}
         className="danger"

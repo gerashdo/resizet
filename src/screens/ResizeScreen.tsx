@@ -1,132 +1,138 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import DragAndDrop from '../components/DragAndDrop'
 import RangeSlider from '../components/RangeSlider'
 import { ResizeNav } from '../components/ReziseNav'
 import { FileList } from '../components/FileList'
-import { Loader } from '../components/Loader'
 import { LoadInfo } from '../components/LoadInfo'
+import { ProgressLoading } from '../components/ProgressLoading'
 import { SectionContainer } from '../components/SectionContainer'
-import JSZip from 'jszip'
-import { saveAs } from 'file-saver'
+import { ResizedImagesList } from '../components/ResizedImagesList'
+import { useResizeImagesWithWorker } from '../hooks/useResizeImagesWithWorker'
+import { createDowndloadZip, getImagesAsAnchor } from '../helpers/resizeFiles';
 
+import { AnchorObject, ResizeState } from '../types'
 import './ResizeScreen.css'
 
-interface FileWithBlob {
-  blob: Blob
-  name: string
-}
+// Importar el Worker
+import ImageWorker from '../webworkers/imageWorker?worker'
+import { getFailedImageNamesMessage } from '../helpers/utils'
 
 export const ResizeScreen = () => {
   const [files, setFiles] = useState<File[]>([])
+  const [phase, setPhase] = useState<ResizeState>(ResizeState.TO_LOAD)
   const [imageQuality, setImageQuality] = useState<number>(100)
   const [imageSize, setImageSize] = useState<number>(100)
-  const [isCompressing, setIsCompressing] = useState<boolean>(false)
+  const [anchorObjects, setAnchorObjects] = useState<AnchorObject[]>([])
+  const [progress, setProgress] = useState<number>(0)
+  const [progressConstant, setProgressConstant] = useState<number>(0)
+
+  const worker = useMemo(() => new ImageWorker(), [])
+
+  const { startResize } = useResizeImagesWithWorker({
+    worker,
+    setProgress,
+    files,
+    progressConstant
+  })
+
+  useEffect(() => {
+    return () => {
+      worker.terminate()
+    }
+  }, [worker])
+
+  useEffect(() => {
+    if (files.length > 0) {
+      setPhase(ResizeState.LOADED)
+      setProgressConstant(80 / files.length)
+    }
+  }, [files])
 
   const handleResize = async () => {
-    if (imageQuality === 100 && imageSize === 100) return
-
-    setIsCompressing(true)
-    const zip = new JSZip();
-
-    const resizePromises = files.map((file) => resize(file))
-    const resizedImages = await Promise.allSettled(resizePromises)
-
-    resizedImages.forEach((result) => {
-      if (result.status === 'fulfilled') {
-        const { blob, name } = result.value
-        zip.file(name, blob)
-      } else {
-        console.error('Error resizing image', result.reason)
-      }
-    })
-
-    // Generate the zip file and download it
-    zip.generateAsync({ type: 'blob' }).then((content) => {
-      saveAs(content, 'resized_images.zip');
-    });
-
+    if (imageQuality === 100 && imageSize === 100) return toast.info('The images are already at 100% quality and size')
+    setProgress(0)
+    setPhase(ResizeState.COMPRESSING)
+    const resizedImages = await startResize(imageQuality, imageSize)
+    setProgress(90)
+    if ( !resizedImages || !resizedImages[0]){
+      toast.error('No images where resized. Check if the browser supports Web Workers.')
+      return setPhase(ResizeState.TO_LOAD)
+    }
+    if (resizedImages[1].length > 0) {
+      toast.error(getFailedImageNamesMessage(resizedImages[1]))
+    }
+    setAnchorObjects(getImagesAsAnchor(resizedImages[0]))
+    setProgress(100)
     setFiles([])
-    setIsCompressing(false)
+    setPhase(ResizeState.COMPRESSED)
   }
 
-  const resize = (file: File): Promise<FileWithBlob> => {
-    return new Promise((resolve, reject) => {
-      const image = new Image()
-      image.src = URL.createObjectURL(file)
-      image.onload = () => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-
-        canvas.width = image.naturalWidth * (imageSize / 100)
-        canvas.height = image.naturalHeight * (imageSize / 100)
-        if (ctx) {
-          ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const fileName = `${file.name.split('.')[0]}_resized.jpg`; // Create a custom file name
-              resolve({ blob, name: fileName });
-            } else {
-              reject({error: 'Error creating blob', name: file.name})
-            }
-          }, 'image/jpeg', imageQuality / 100);
-        }else{
-          reject({error: 'Error resizing image', name: file.name})
-        }
-      }
-      image.onerror = () => {
-        reject({error: 'Error loading image', name: file.name})
-      }
+  const handleOnDownloadAll = () => {
+    toast.promise(createDowndloadZip(anchorObjects, 'resized_images.zip'), {
+      loading: 'Downloading images...',
+      success: 'Images downloaded',
+      error: 'Error downloading images'
     })
   }
 
-  if (isCompressing) {
-    return (
-      <div className="compressing">
-        <Loader />
-        <p>Compressing</p>
-      </div>
-    )
+  const handleOnClear = () => {
+    setAnchorObjects([])
+    setPhase(ResizeState.TO_LOAD)
+  }
+
+  if (phase === ResizeState.COMPRESSING) {
+    return (<ProgressLoading progress={progress} />)
   }
 
   return (
     <>
       <ResizeNav />
       <main>
-        <SectionContainer>
-          <DragAndDrop onFilesSelected={setFiles} files={files} />
-          <LoadInfo filesCount={files.length} onClearFiles={() => setFiles([])} />
-          { files.length > 0 && (
-            <>
-              <div className="upload-settings">
-                <RangeSlider
-                  label="Image Quality"
-                  min={10}
-                  max={100}
-                  step={10}
-                  initialValue={imageQuality}
-                  onChange={(newValue) => setImageQuality(newValue)}
-                />
-                <RangeSlider
-                  label="Image Size"
-                  min={10}
-                  max={100}
-                  step={10}
-                  initialValue={imageSize} onChange={(newValue) => setImageSize(newValue)}
-                />
-              </div>
-              <button className="primary bold large" onClick={handleResize}>
-                Resize and Download
-              </button>
-            </>
-          )}
-        </SectionContainer>
-        {
-          files.length > 0 && (
-            <SectionContainer>
-              <FileList files={files} onRemoveFile={(index) => setFiles(files.filter((_, i) => i !== index))} />
-            </SectionContainer>
-          )
-        }
+        {(phase === ResizeState.TO_LOAD || phase === ResizeState.LOADED) && (
+          <SectionContainer>
+            <DragAndDrop onFilesSelected={setFiles} files={files} />
+            <LoadInfo filesCount={files.length} onClearFiles={() => setFiles([])} />
+            {files.length > 0 && phase === ResizeState.LOADED && (
+              <>
+                <div className="upload-settings">
+                  <RangeSlider
+                    label="Image Quality"
+                    min={10}
+                    max={100}
+                    step={10}
+                    initialValue={imageQuality}
+                    onChange={(newValue) => setImageQuality(newValue)}
+                  />
+                  <RangeSlider
+                    label="Image Size"
+                    min={10}
+                    max={100}
+                    step={10}
+                    initialValue={imageSize} onChange={(newValue) => setImageSize(newValue)}
+                  />
+                </div>
+                <button className="primary bold large" onClick={handleResize}>
+                  Resize Images
+                </button>
+              </>
+            )}
+          </SectionContainer>
+        )}
+        {files.length > 0 && phase === ResizeState.LOADED && (
+          <SectionContainer>
+            <FileList files={files} onRemoveFile={(index) => setFiles(files.filter((_, i) => i !== index))} />
+          </SectionContainer>
+        )}
+        {anchorObjects.length > 0 && phase === ResizeState.COMPRESSED && (
+          <SectionContainer>
+            <ResizedImagesList
+              anchorObjects={anchorObjects}
+              onDownloadAll={handleOnDownloadAll}
+              onClear={handleOnClear}
+            />
+          </SectionContainer>
+        )}
       </main>
     </>
   )
