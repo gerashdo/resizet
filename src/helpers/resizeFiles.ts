@@ -16,7 +16,7 @@ export const getSuccessImages = (resizedImages: PromiseSettledResult<FileWithBlo
   return converted
 }
 
-export const createDowndloadZip = (files: AnchorObject[], fileName: string) => {
+export const createDowndloadZip = async (files: AnchorObject[], fileName: string) => {
   const zip = new JSZip();
   files.forEach((file) => {
     const { blob, name } = file
@@ -24,9 +24,8 @@ export const createDowndloadZip = (files: AnchorObject[], fileName: string) => {
   })
 
   // Generate the zip file and download it
-  zip.generateAsync({ type: 'blob' }).then((content) => {
-    saveAs(content, fileName);
-  });
+  const content = await zip.generateAsync({ type: 'blob'})
+  saveAs(content, fileName)
 }
 
 export const getImagesAsAnchor = (files: FileWithBlob[]): AnchorObject[] => {

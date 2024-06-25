@@ -69,8 +69,11 @@ export const ResizeScreen = () => {
   }
 
   const handleOnDownloadAll = () => {
-    createDowndloadZip(anchorObjects, 'resized_images.zip')
-    toast.success('The images are being downloaded')
+    toast.promise(createDowndloadZip(anchorObjects, 'resized_images.zip'), {
+      loading: 'Downloading images...',
+      success: 'Images downloaded',
+      error: 'Error downloading images'
+    })
   }
 
   const handleOnClear = () => {
