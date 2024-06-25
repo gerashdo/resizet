@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import DragAndDrop from '../components/DragAndDrop'
 import RangeSlider from '../components/RangeSlider'
 import { ResizeNav } from '../components/ReziseNav'
@@ -10,11 +11,12 @@ import { ResizedImagesList } from '../components/ResizedImagesList'
 import { useResizeImagesWithWorker } from '../hooks/useResizeImagesWithWorker'
 import { createDowndloadZip, getImagesAsAnchor } from '../helpers/resizeFiles';
 
-import { AnchorObject, FileWithBlob, ResizeState } from '../types'
+import { AnchorObject, ResizeState } from '../types'
 import './ResizeScreen.css'
 
 // Importar el Worker
 import ImageWorker from '../webworkers/imageWorker?worker'
+import { getFailedImageNamesMessage } from '../helpers/utils'
 
 export const ResizeScreen = () => {
   const [files, setFiles] = useState<File[]>([])
@@ -48,13 +50,19 @@ export const ResizeScreen = () => {
   }, [files])
 
   const handleResize = async () => {
-    if (imageQuality === 100 && imageSize === 100) return
+    if (imageQuality === 100 && imageSize === 100) return toast.info('The images are already at 100% quality and size')
     setProgress(0)
     setPhase(ResizeState.COMPRESSING)
-    const resizedImages: FileWithBlob[] = await startResize(imageQuality, imageSize)
+    const resizedImages = await startResize(imageQuality, imageSize)
     setProgress(90)
-    if ( resizedImages.length === 0 ) return setPhase(ResizeState.TO_LOAD)
-    setAnchorObjects(getImagesAsAnchor(resizedImages))
+    if ( !resizedImages || !resizedImages[0]){
+      toast.error('No images where resized. Check if the browser supports Web Workers.')
+      return setPhase(ResizeState.TO_LOAD)
+    }
+    if (resizedImages[1].length > 0) {
+      toast.error(getFailedImageNamesMessage(resizedImages[1]))
+    }
+    setAnchorObjects(getImagesAsAnchor(resizedImages[0]))
     setProgress(100)
     setFiles([])
     setPhase(ResizeState.COMPRESSED)
@@ -62,6 +70,7 @@ export const ResizeScreen = () => {
 
   const handleOnDownloadAll = () => {
     createDowndloadZip(anchorObjects, 'resized_images.zip')
+    toast.success('The images are being downloaded')
   }
 
   const handleOnClear = () => {
