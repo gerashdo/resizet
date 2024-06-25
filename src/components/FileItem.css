@@ -4,27 +4,36 @@ li.file-item {
   background-color: var(--color-background-lighter);
   border-radius: 0.75rem;
   display: flex;
+  flex-direction: column;
   gap: 1rem;
   justify-content: space-between;
-  min-height: 3.5rem;
-  padding: 0.75rem 1rem;
-
-  svg {
-    width: 2.5rem;
-    aspect-ratio: 1;
-    margin: 0;
-  }
+  padding: 1rem;
 
   header {
     display: flex;
     gap: 1rem;
     align-items: center;
+    flex-direction: column;
+
+    img {
+      aspect-ratio: 1;
+      border-radius: 0.5rem;
+      object-fit: cover;
+      width: 100%;
+    }
 
     p {
-      margin: 0;
       font-size: 1.125rem;
+      margin: 0;
       text-align: center;
     }
+  }
+
+  button {
+    align-items: center;
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
   }
 
   button svg {

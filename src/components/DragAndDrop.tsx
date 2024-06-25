@@ -23,7 +23,7 @@ const DragAndDrop = ({
     if (selectedFiles && selectedFiles.length > 0) {
       const newFiles = Array.from(selectedFiles)
       const nonDuplicateFiles = getUniqueFiles(newFiles, files)
-      onFilesSelected([...files, ...nonDuplicateFiles])
+      onFilesSelected(nonDuplicateFiles)
     }
   }
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
@@ -32,7 +32,7 @@ const DragAndDrop = ({
     if (droppedFiles.length > 0) {
       const newFiles = Array.from(droppedFiles)
       const nonDuplicateFiles = getUniqueFiles(newFiles, files)
-      onFilesSelected([...files, ...nonDuplicateFiles])
+      onFilesSelected(nonDuplicateFiles)
     }
   }
 

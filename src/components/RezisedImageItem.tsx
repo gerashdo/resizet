@@ -1,4 +1,4 @@
-import { ImageIcon } from "./Icons/Image"
+import { DownloadIcon } from "./Icons/Dowload"
 
 import { AnchorObject } from "../types"
 import './ResizedImageItem.css'
@@ -12,16 +12,16 @@ export const ResizedImageItem = ({ anchorObject }:ResizedImageItemProps) => {
   return (
     <li className="resized-item">
       <header className="item">
-        <ImageIcon fillColor='rgb(115 115 115)'/>
-        <p>{name}</p>
+        <img src={url} alt={name} />
+        <p>{ name.length > 20 && !name.slice(0,20).includes(' ') ? `${name.slice(0, 10)}...` : name}</p>
       </header>
       <a
         key={name}
-        className="button secondary small"
+        className="button small secondary"
         href={url}
         download={name}
       >
-        Download
+        <DownloadIcon fillColor="#6dc24b" /><span>Download</span>
       </a>
     </li>
   )
