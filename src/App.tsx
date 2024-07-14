@@ -1,12 +1,13 @@
-import { ResizeScreen } from './screens/ResizeScreen'
+// import { ResizeScreen } from './screens/ResizeScreen'
 import './App.css'
 import { Toaster } from 'sonner'
+import MainRouter from './MainRouter'
 
 function App() {
 
   return (
     <>
-      <ResizeScreen />
+      <MainRouter />
       <Toaster
         position='top-left'
         richColors

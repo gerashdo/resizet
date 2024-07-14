@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
+import { ScreenLayout } from '../layouts/ScreenLayout'
 import { toast } from 'sonner'
 import DragAndDrop from '../components/DragAndDrop'
 import RangeSlider from '../components/RangeSlider'
-import { ResizeNav } from '../components/ReziseNav'
 import { FileList } from '../components/FileList'
 import { LoadInfo } from '../components/LoadInfo'
 import { ProgressLoading } from '../components/ProgressLoading'
@@ -91,8 +91,7 @@ export const ResizeScreen = () => {
   }
 
   return (
-    <>
-      <ResizeNav />
+    <ScreenLayout>
       <main>
         {(phase === ResizeState.TO_LOAD || phase === ResizeState.LOADED) && (
           <SectionContainer>
@@ -143,6 +142,6 @@ export const ResizeScreen = () => {
           </SectionContainer>
         )}
       </main>
-    </>
+    </ScreenLayout>
   )
 }
