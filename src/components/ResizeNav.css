@@ -10,11 +10,39 @@ div.nav-container {
   margin-bottom: 3rem;
 
   .logo {
-    width: 4rem;
-    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    svg {
+      width: 4rem;
+      aspect-ratio: 1;
+    }
   }
 
   span {
     color: var(--color-primary);
+  }
+
+  ul {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+
+    li {
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.3s;
+
+      &:hover {
+        color: var(--color-primary);
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+    }
   }
 }
