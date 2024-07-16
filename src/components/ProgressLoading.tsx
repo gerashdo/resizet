@@ -3,14 +3,15 @@ import { Loader } from "./Loader"
 import './ProgressLoading.css'
 
 type ProgressLoadingProps = {
-  progress: number
+  progress?: number
+  title: string
 }
-export const ProgressLoading = ({ progress }: ProgressLoadingProps) => {
+export const ProgressLoading = ({ progress, title }: ProgressLoadingProps) => {
   return (
     <div className="compressing">
       <Loader />
-      <h2>{progress.toFixed(1)}%</h2>
-      <p>Resizing...</p>
+      {progress && <h2>{progress.toFixed(1)}%</h2>}
+      <p>{title}</p>
     </div>
   )
 }
