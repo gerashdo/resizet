@@ -1,13 +1,16 @@
-import { useState } from "react";
-import { ScreenLayout } from "../layouts/ScreenLayout";
-import DragAndDrop from "../components/DragAndDrop";
-import { SectionContainer } from "../layouts/SectionContainer";
-import { LoadInfo } from "../components/LoadInfo";
-import { readFiles, transformImages } from '../helpers/loadFiles'
-
+import { useEffect, useMemo, useState } from "react";
 import { Document, View, Page, Image, Text, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
-import { UploadFile } from "../types";
+import { ScreenLayout } from "../layouts/ScreenLayout";
+import { SectionContainer } from "../layouts/SectionContainer";
 import { ProgressLoading } from "../components/ProgressLoading";
+import DragAndDrop from "../components/DragAndDrop";
+import { LoadInfo } from "../components/LoadInfo";
+import { useReadImageFilesWithWorker } from "../hooks/useReadImageFilesWithWorker";
+import { transformImages } from '../helpers/loadFiles'
+
+import { UploadFile } from "../types";
+
+import ReadFilesWorker from '../webworkers/fileReaderWorker?worker'
 
 const styles = StyleSheet.create({
   page: {
@@ -46,19 +49,28 @@ const ContactSheetPDF = ({ images }:{ images: UploadFile[] }) => (
 
 
 export default function ContactSheetScreen() {
+  const worker = useMemo(() => new ReadFilesWorker(), [])
   const [files, setFiles] = useState<UploadFile[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { progress, readImageFiles } = useReadImageFilesWithWorker(worker)
+
+  useEffect(() => {
+    return () => {
+      worker.terminate()
+    }
+  }, [])
 
   const handleUploadFiles = async (files: File[]) => {
     setIsLoading(true)
-    const newFiles = await readFiles(files)
+    const newFiles = await readImageFiles(files)
+    console.log(newFiles)
     const optimizedFiles = await transformImages(newFiles)
     setFiles(prev => [...prev, ...optimizedFiles])
     setIsLoading(false)
   }
 
   if (isLoading) {
-    return (<ProgressLoading title="Loading Photos..."/>)
+    return (<ProgressLoading title="Loading Photos..." progress={progress}/>)
   }
 
   return (
