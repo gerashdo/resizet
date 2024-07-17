@@ -52,7 +52,7 @@ export default function ContactSheetScreen() {
   const worker = useMemo(() => new ReadFilesWorker(), [])
   const [files, setFiles] = useState<UploadFile[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { progress, readImageFiles } = useReadImageFilesWithWorker(worker)
+  const { progress, readImageFiles, readFiles } = useReadImageFilesWithWorker(worker)
 
   useEffect(() => {
     return () => {
@@ -62,7 +62,8 @@ export default function ContactSheetScreen() {
 
   const handleUploadFiles = async (files: File[]) => {
     setIsLoading(true)
-    const newFiles = await readImageFiles(files)
+    // const newFiles = await readImageFiles(files)
+    const newFiles = await readFiles(files)
     console.log(newFiles)
     const optimizedFiles = await transformImages(newFiles)
     setFiles(prev => [...prev, ...optimizedFiles])

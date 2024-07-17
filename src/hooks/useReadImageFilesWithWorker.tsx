@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { ErrorWithMessage, UploadFile } from "../types"
+import { readFile } from "../helpers/loadFiles"
 
 export const useReadImageFilesWithWorker = (worker: Worker) => {
   const [loading, setLoading] = useState(false)
@@ -52,5 +53,21 @@ export const useReadImageFilesWithWorker = (worker: Worker) => {
     })
   }
 
-  return { loading, progress, error, readImageFiles }
+  const readFiles = async (files: File[]): Promise<UploadFile[]> => {
+    setLoading(true)
+    setProgress(0)
+    setError(null)
+    const results: UploadFile[] = [];
+
+    for (const file of files) {
+      const uploadFile = await readFile(file);
+      results.push(uploadFile);
+      setProgress((prev) => prev + (80 / files.length))
+    }
+
+    setLoading(false);
+    return results;
+  };
+
+  return { loading, progress, error, readImageFiles, readFiles }
 }
