@@ -1,13 +1,13 @@
 
 div.nav-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   padding: 0 2rem;
   background-color: var(--color-background);
   color: var(--color-white);
   gap: 2rem;
-  margin-bottom: 3rem;
+  margin-block: 3rem;
 
   .logo {
     display: flex;
@@ -28,6 +28,7 @@ div.nav-container {
     display: flex;
     gap: 2rem;
     list-style: none;
+    padding: 0;
 
     li {
       font-size: 1rem;
@@ -50,5 +51,16 @@ div.nav-container {
         }
       }
     }
+  }
+}
+
+@media screen and (width > 630px) {
+  div.nav-container {
+    justify-content: center;
+    flex-direction: row;
+  }
+
+  ul {
+    margin-inline-start: 2rem;
   }
 }
