@@ -1,16 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { Document, View, Page, Image, Text, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
 import { ScreenLayout } from "../layouts/ScreenLayout";
 import { SectionContainer } from "../layouts/SectionContainer";
 import { ProgressLoading } from "../components/ProgressLoading";
 import DragAndDrop from "../components/DragAndDrop";
 import { LoadInfo } from "../components/LoadInfo";
-import { useReadImageFilesWithWorker } from "../hooks/useReadImageFilesWithWorker";
+import { useReadImageFiles } from "../hooks/useReadImageFilesWithWorker";
 import { transformImages } from '../helpers/loadFiles'
 
 import { UploadFile } from "../types";
-
-import ReadFilesWorker from '../webworkers/fileReaderWorker?worker'
 
 const styles = StyleSheet.create({
   page: {
@@ -49,20 +47,12 @@ const ContactSheetPDF = ({ images }:{ images: UploadFile[] }) => (
 
 
 export default function ContactSheetScreen() {
-  const worker = useMemo(() => new ReadFilesWorker(), [])
   const [files, setFiles] = useState<UploadFile[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { progress, readImageFiles, readFiles } = useReadImageFilesWithWorker(worker)
-
-  useEffect(() => {
-    return () => {
-      worker.terminate()
-    }
-  }, [])
+  const { progress, readFiles } = useReadImageFiles()
 
   const handleUploadFiles = async (files: File[]) => {
     setIsLoading(true)
-    // const newFiles = await readImageFiles(files)
     const newFiles = await readFiles(files)
     console.log(newFiles)
     const optimizedFiles = await transformImages(newFiles)

@@ -67,6 +67,8 @@ button, .button {
   font-family: inherit;
   cursor: pointer;
   transition: all 0.25s ease;
+  text-decoration: none;
+  text-align: center;
 
   &.bold {
     font-weight: bold;
