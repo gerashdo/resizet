@@ -5,8 +5,8 @@ import { SectionContainer } from "../layouts/SectionContainer";
 import { ProgressLoading } from "../components/ProgressLoading";
 import DragAndDrop from "../components/DragAndDrop";
 import { LoadInfo } from "../components/LoadInfo";
-import { useReadImageFiles } from "../hooks/useReadImageFilesWithWorker";
-import { transformImages } from '../helpers/loadFiles'
+import { useReadImageFiles } from "../hooks/useReadImageFiles";
+import { useTransformImages } from "../hooks/useTransformImages";
 
 import { UploadFile } from "../types";
 
@@ -49,19 +49,19 @@ const ContactSheetPDF = ({ images }:{ images: UploadFile[] }) => (
 export default function ContactSheetScreen() {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { progress, readFiles } = useReadImageFiles()
+  const { progress: readProgress , readFiles } = useReadImageFiles(50)
+  const { startTransform, progress: transformProgress } = useTransformImages(50)
 
   const handleUploadFiles = async (files: File[]) => {
     setIsLoading(true)
     const newFiles = await readFiles(files)
-    console.log(newFiles)
-    const optimizedFiles = await transformImages(newFiles)
+    const optimizedFiles = await startTransform(newFiles)
     setFiles(prev => [...prev, ...optimizedFiles])
     setIsLoading(false)
   }
 
   if (isLoading) {
-    return (<ProgressLoading title="Loading Photos..." progress={progress}/>)
+    return (<ProgressLoading title="Loading Photos..." progress={readProgress + transformProgress}/>)
   }
 
   return (

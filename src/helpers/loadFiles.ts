@@ -14,16 +14,19 @@ const getJPEGDimensions = (buffer: Uint8Array): { width: number, height: number 
   return { width: decoded.width, height: decoded.height }
 }
 
-const readFile = (file: File): Promise<UploadFile> => {
-  return new Promise<UploadFile>((resolve, reject) => {
+const readFile = (file: File): Promise<UploadFile | ErrorWithMessage> => {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
       if (reader.result) {
-        const buffer = new Uint8Array(reader.result as ArrayBuffer);
-        const { width, height } = getJPEGDimensions(buffer)
-        resolve({ file, url: reader.result as string, width, height });
-      } else {
-        reject('Error reading file');
+        try {
+          const buffer = new Uint8Array(reader.result as ArrayBuffer);
+          const { width, height } = getJPEGDimensions(buffer)
+          resolve({ file, url: reader.result as string, width, height });
+        } catch (errorCatched) {
+          console.error(errorCatched);
+          resolve({ error: file.name });
+        }
       }
     };
     reader.onerror = () => reject('Error reading file');
@@ -34,13 +37,20 @@ const readFile = (file: File): Promise<UploadFile> => {
 export const readFilesInBatch = async (files: File[], batchSize: number, setProgress: (progress: number) => void): Promise<UploadFile[]> => {
   const totalFiles = files.length;
   const results: UploadFile[] = [];
+  const errorFiles: string[] = [];
   let processedFiles = 0;
 
   const processBatch = (batch: File[]): Promise<void> => {
     return new Promise((resolve) => {
       setTimeout(async () => {
         const batchResults = await Promise.all(batch.map(readFile));
-        results.push(...batchResults);
+        batchResults.forEach(result => {
+          if ('error' in result) {
+            errorFiles.push(result.error);
+          } else {
+            results.push(result);
+          }
+        });
         processedFiles += batch.length;
         setProgress(processedFiles);
         resolve();
@@ -51,6 +61,10 @@ export const readFilesInBatch = async (files: File[], batchSize: number, setProg
   for (let i = 0; i < totalFiles; i += batchSize) {
     const batch = files.slice(i, i + batchSize);
     await processBatch(batch);
+  }
+
+  if (errorFiles.length > 0) {
+    console.error(`Error reading files: ${errorFiles.join(', ')}`);
   }
 
   return results;
@@ -78,27 +92,43 @@ export const transformImage = (uploadFile: UploadFile) => {
     )
 
     setTimeout(() => {
-      if (!done) resolve({ error: 'Error resizing image' })
+      if (!done) resolve({ error: uploadFile.file.name })
     }, 10000);
   })
 }
 
-export const transformImages = async(files: UploadFile[]) => {
-  const errorFiles: string[] = []
-  const transformedFiles: UploadFile[] = []
+export const transformImagesInBatch = async (files: UploadFile[], batchSize: number, setProgress: (progress: number) => void): Promise<UploadFile[]> => {
+  const totalFiles = files.length;
+  const results: UploadFile[] = [];
+  const errorFiles: string[] = [];
+  let processedFiles = 0;
 
-  for (let i = 0; i < files.length; i++) {
-    const transformedFile = await transformImage(files[i])
-    if ('error' in transformedFile) {
-      errorFiles.push(files[i].file.name)
-    } else {
-      transformedFiles.push(transformedFile)
-    }
+  const processBatch = (batch: UploadFile[]): Promise<void> => {
+    return new Promise((resolve) => {
+      setTimeout(async () => {
+        const batchResults = await Promise.all(batch.map(transformImage));
+        batchResults.forEach(result => {
+          if ('error' in result) {
+            errorFiles.push(result.error);
+          } else {
+            results.push(result);
+          }
+        });
+        processedFiles += batch.length;
+        setProgress(processedFiles);
+        resolve();
+      }, 0);
+    });
+  };
+
+  for (let i = 0; i < totalFiles; i += batchSize) {
+    const batch = files.slice(i, i + batchSize);
+    await processBatch(batch);
   }
 
   if (errorFiles.length > 0) {
-    console.error(`Error transforming images: ${errorFiles.join(', ')}`)
+    console.error(`Error transforming images: ${errorFiles.join(', ')}`);
   }
 
-  return transformedFiles
+  return results;
 }
