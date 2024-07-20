@@ -1,9 +1,9 @@
 import { useState, useRef, useCallback } from "react"
-import { readFilesInBatch } from "../helpers/loadFiles"
 import { UploadFile } from "../types"
 import { getErrorMessage } from "../helpers/utils"
 
-export const useReadImageFiles = (totalProgress: number = 100) => {
+
+export const useReadImageFiles = (totalProgress: number = 100, worker: Worker) => {
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState<number>(0)
   const [error, setError] = useState<string | null>(null)
@@ -14,25 +14,60 @@ export const useReadImageFiles = (totalProgress: number = 100) => {
     setProgress(progressConstantRef.current * totalProcessed)
   }, [])
 
-  const readFiles = async (files: File[]): Promise<UploadFile[]> => {
+  const readFilesByBatch = async (files: File[]): Promise<UploadFile[]> => {
+    const batchConstant = 3
+    setLoading(true)
     const constant = totalProgress / files.length
     progressConstantRef.current = constant
-    setLoading(true)
     setProgress(0)
     setError(null)
 
-    let results: UploadFile[] = []
+    let totalProcessed = 0
+    const results: UploadFile[] = []
 
-    try {
-      results = await readFilesInBatch(files, 3, incrementProgress)
-    } catch (error) {
-      const errorMessage = getErrorMessage(error)
-      setError(errorMessage)
+    for (let i = 0; i < files.length; i += batchConstant) {
+      const batch = files.slice(i, i + batchConstant)
+      console.log({ batch })
+      try {
+        const filesRead = await readFilesBatch(batch)
+        console.log({ filesRead })
+        results.push(...filesRead)
+        totalProcessed += batch.length
+        incrementProgress(totalProcessed)
+        console.log({ totalProcessed })
+      } catch (error) {
+        console.log('error', error)
+      }
     }
+    console.log("finish")
+    setLoading(false)
+    return results
+  }
 
-    setLoading(false);
-    return results;
-  };
+  const readFilesBatch = async (files: File[]): Promise<UploadFile[]> => {
+    return new Promise((resolve) => {
+      worker.onmessage = (event: MessageEvent<UploadFile[]>) => {
+        resolve(event.data)
+      }
 
-  return { loading, progress, error, readFiles }
+      worker.onerror = (error) => {
+        const errorMessage = getErrorMessage(error)
+        console.log('error', errorMessage)
+      }
+
+      try {
+        worker.postMessage({ files })
+        console.log('posting message')
+      } catch (error) {
+        console.log('error', error)
+      }
+    })
+  }
+
+  return {
+    readFilesByBatch,
+    loading,
+    progress,
+    error
+  }
 }

@@ -14,7 +14,7 @@ const getJPEGDimensions = (buffer: Uint8Array): { width: number, height: number 
   return { width: decoded.width, height: decoded.height }
 }
 
-const readFile = (file: File): Promise<UploadFile | ErrorWithMessage> => {
+export const readFile = (file: File): Promise<UploadFile | ErrorWithMessage> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
@@ -33,42 +33,6 @@ const readFile = (file: File): Promise<UploadFile | ErrorWithMessage> => {
     reader.readAsArrayBuffer(file);
   });
 }
-
-export const readFilesInBatch = async (files: File[], batchSize: number, setProgress: (progress: number) => void): Promise<UploadFile[]> => {
-  const totalFiles = files.length;
-  const results: UploadFile[] = [];
-  const errorFiles: string[] = [];
-  let processedFiles = 0;
-
-  const processBatch = (batch: File[]): Promise<void> => {
-    return new Promise((resolve) => {
-      setTimeout(async () => {
-        const batchResults = await Promise.all(batch.map(readFile));
-        batchResults.forEach(result => {
-          if ('error' in result) {
-            errorFiles.push(result.error);
-          } else {
-            results.push(result);
-          }
-        });
-        processedFiles += batch.length;
-        setProgress(processedFiles);
-        resolve();
-      }, 0);
-    });
-  };
-
-  for (let i = 0; i < totalFiles; i += batchSize) {
-    const batch = files.slice(i, i + batchSize);
-    await processBatch(batch);
-  }
-
-  if (errorFiles.length > 0) {
-    console.error(`Error reading files: ${errorFiles.join(', ')}`);
-  }
-
-  return results;
-};
 
 export const transformImage = (uploadFile: UploadFile) => {
   return new Promise<UploadFile | ErrorWithMessage>((resolve) => {
@@ -132,3 +96,24 @@ export const transformImagesInBatch = async (files: UploadFile[], batchSize: num
 
   return results;
 }
+
+export const processFiles = async (files: File[]) => {
+  const results: UploadFile[] = [];
+  const errorFiles: string[] = [];
+
+  const filesRead = await Promise.all(files.map(readFile))
+
+  filesRead.forEach(result => {
+    if ('error' in result) {
+      errorFiles.push(result.error);
+    } else {
+      results.push(result);
+    }
+  });
+
+  if (errorFiles.length > 0) {
+    console.error(`Error transforming images: ${errorFiles.join(', ')}`);
+  }
+
+  return results;
+};

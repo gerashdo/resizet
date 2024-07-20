@@ -1,60 +1,35 @@
-import { useState } from "react";
-import { Document, View, Page, Image, Text, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
+import { useEffect, useMemo, useState } from "react";
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { ScreenLayout } from "../layouts/ScreenLayout";
 import { SectionContainer } from "../layouts/SectionContainer";
 import { ProgressLoading } from "../components/ProgressLoading";
+import { ContactSheetPDF } from "../components/ContactSheetPDF";
 import DragAndDrop from "../components/DragAndDrop";
 import { LoadInfo } from "../components/LoadInfo";
 import { useReadImageFiles } from "../hooks/useReadImageFiles";
 import { useTransformImages } from "../hooks/useTransformImages";
+import LoadFilesWorker from "../webworkers/loadFilesWorker?worker";
 
 import { UploadFile } from "../types";
 
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    backgroundColor: 'black',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
-    paddingVertical: 10,
-  },
-  view: {
-    width: '23%',
-    height: 'auto',
-    gap: 5,
-  },
-  text: {
-    color: 'white',
-    fontSize: 10,
-    alignSelf: 'center',
-  }
-});
-
-const ContactSheetPDF = ({ images }:{ images: UploadFile[] }) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      {images.map((image, index) => ( image.url &&
-        <View style={styles.view} key={index}>
-          <Image src={image.url} />
-          <Text style={styles.text}>{image.file.name}</Text>
-        </View>
-      ))}
-    </Page>
-  </Document>
-);
-
 
 export default function ContactSheetScreen() {
+  const worker = useMemo(() => new LoadFilesWorker(), [])
   const [files, setFiles] = useState<UploadFile[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { progress: readProgress , readFiles } = useReadImageFiles(50)
+  const { progress: readProgress, readFilesByBatch } = useReadImageFiles(50, worker)
   const { startTransform, progress: transformProgress } = useTransformImages(50)
+
+  useEffect(() => {
+    return () => {
+      worker.terminate()
+    }
+  }, [worker])
 
   const handleUploadFiles = async (files: File[]) => {
     setIsLoading(true)
-    const newFiles = await readFiles(files)
+    console.log('files', files)
+    const newFiles = await readFilesByBatch(files)
     const optimizedFiles = await startTransform(newFiles)
     setFiles(prev => [...prev, ...optimizedFiles])
     setIsLoading(false)
