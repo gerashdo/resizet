@@ -19,7 +19,7 @@ export default function ContactSheetScreen() {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { progress: readProgress, readFilesByBatch, error: filesWithReadError } = useReadImageFiles(50, worker)
-  const { startTransform, progress: transformProgress } = useTransformImages(50)
+  const { startTransform, progress: transformProgress, errors: filesFailedToTransform } = useTransformImages(50)
 
   useEffect(() => {
     return () => {
@@ -28,13 +28,14 @@ export default function ContactSheetScreen() {
   }, [worker])
 
   useEffect(() => {
-    if (!isLoading && filesWithReadError.length > 0) {
+    if (!isLoading && (filesWithReadError.length > 0 || filesFailedToTransform.length > 0)) {
+      const errorNames = new Set([...filesWithReadError, ...filesFailedToTransform])
       toast.error(
-        `Error reading file${filesWithReadError.length > 1 ? 's': ''}: ${filesWithReadError.join(', ')}`,
+        `Error reading file${filesWithReadError.length > 1 ? 's': ''}: ${Array.from(errorNames).join(', ')}`,
         { duration: 10000}
       )
     }
-  }, [filesWithReadError, isLoading])
+  }, [filesWithReadError, filesFailedToTransform, isLoading])
 
   const handleUploadFiles = async (files: File[]) => {
     setIsLoading(true)

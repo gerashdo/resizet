@@ -61,7 +61,7 @@ export const transformImage = (uploadFile: UploadFile) => {
   })
 }
 
-export const transformImagesInBatch = async (files: UploadFile[], batchSize: number, setProgress: (progress: number) => void): Promise<UploadFile[]> => {
+export const transformImagesInBatch = async (files: UploadFile[], batchSize: number, setProgress: (progress: number) => void): Promise<readonly [UploadFile[], string[]]> => {
   const totalFiles = files.length;
   const results: UploadFile[] = [];
   const errorFiles: string[] = [];
@@ -94,7 +94,7 @@ export const transformImagesInBatch = async (files: UploadFile[], batchSize: num
     console.error(`Error transforming images: ${errorFiles.join(', ')}`);
   }
 
-  return results;
+  return [results, errorFiles] as const;
 }
 
 export const readFiles = async (files: File[]): Promise<readonly [UploadFile[], string[]]> => {

@@ -38,7 +38,7 @@ export const useReadImageFiles = (totalProgress: number = 100, worker: Worker) =
         console.log({ totalProcessed })
       } catch (err) {
         setError(prev => [...prev, ...batch.map(file => file.name)])
-        console.log('error try', err)
+        // console.log('error try', err)
       }
     }
 
