@@ -15,7 +15,7 @@ const getJPEGDimensions = (buffer: Uint8Array): { width: number, height: number 
 }
 
 export const readFile = (file: File): Promise<UploadFile | ErrorWithMessage> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = () => {
       if (reader.result) {
@@ -29,7 +29,7 @@ export const readFile = (file: File): Promise<UploadFile | ErrorWithMessage> => 
         }
       }
     };
-    reader.onerror = () => reject('Error reading file');
+    reader.onerror = () => resolve({ error: file.name });
     reader.readAsArrayBuffer(file);
   });
 }
@@ -97,7 +97,7 @@ export const transformImagesInBatch = async (files: UploadFile[], batchSize: num
   return results;
 }
 
-export const processFiles = async (files: File[]) => {
+export const readFiles = async (files: File[]): Promise<readonly [UploadFile[], string[]]> => {
   const results: UploadFile[] = [];
   const errorFiles: string[] = [];
 
@@ -115,5 +115,5 @@ export const processFiles = async (files: File[]) => {
     console.error(`Error transforming images: ${errorFiles.join(', ')}`);
   }
 
-  return results;
+  return [results, errorFiles] as const;
 };

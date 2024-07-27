@@ -6,7 +6,7 @@ import { getErrorMessage } from "../helpers/utils"
 export const useReadImageFiles = (totalProgress: number = 100, worker: Worker) => {
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState<number>(0)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string[]>([])
   const progressConstantRef = useRef<number>(0)
 
   const incrementProgress = useCallback((totalProcessed: number) => {
@@ -20,7 +20,7 @@ export const useReadImageFiles = (totalProgress: number = 100, worker: Worker) =
     const constant = totalProgress / files.length
     progressConstantRef.current = constant
     setProgress(0)
-    setError(null)
+    setError([])
 
     let totalProcessed = 0
     const results: UploadFile[] = []
@@ -29,37 +29,50 @@ export const useReadImageFiles = (totalProgress: number = 100, worker: Worker) =
       const batch = files.slice(i, i + batchConstant)
       console.log({ batch })
       try {
-        const filesRead = await readFilesBatch(batch)
+        const [filesRead, filesWithError ]= await readFilesBatch(batch)
         console.log({ filesRead })
         results.push(...filesRead)
+        setError(prev => [...prev, ...filesWithError])
         totalProcessed += batch.length
         incrementProgress(totalProcessed)
         console.log({ totalProcessed })
-      } catch (error) {
-        console.log('error', error)
+      } catch (err) {
+        setError(prev => [...prev, ...batch.map(file => file.name)])
+        console.log('error try', err)
       }
     }
+
     console.log("finish")
     setLoading(false)
     return results
   }
 
-  const readFilesBatch = async (files: File[]): Promise<UploadFile[]> => {
-    return new Promise((resolve) => {
-      worker.onmessage = (event: MessageEvent<UploadFile[]>) => {
+  const readFilesBatch = async (files: File[]): Promise<readonly [UploadFile[], string]> => {
+    return new Promise((resolve, reject) => {
+      let done = false
+      worker.onmessage = (event: MessageEvent<readonly [UploadFile[], string]>) => {
         resolve(event.data)
+        done = true
       }
 
       worker.onerror = (error) => {
         const errorMessage = getErrorMessage(error)
+        reject(errorMessage)
         console.log('error', errorMessage)
       }
 
       try {
         worker.postMessage({ files })
         console.log('posting message')
+        setTimeout(() => {
+          if (!done) {
+            reject('timeout')
+          }
+        }, 8000)
       } catch (error) {
-        console.log('error', error)
+        const errorMessage = getErrorMessage(error)
+        console.log('error', errorMessage)
+        reject(errorMessage)
       }
     })
   }
@@ -68,6 +81,6 @@ export const useReadImageFiles = (totalProgress: number = 100, worker: Worker) =
     readFilesByBatch,
     loading,
     progress,
-    error
+    error: error
   }
 }
