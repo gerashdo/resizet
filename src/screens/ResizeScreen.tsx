@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import { ScreenLayout } from '../layouts/ScreenLayout'
 import { toast } from 'sonner'
 import DragAndDrop from '../components/DragAndDrop'
 import RangeSlider from '../components/RangeSlider'
-import { ResizeNav } from '../components/ReziseNav'
 import { FileList } from '../components/FileList'
 import { LoadInfo } from '../components/LoadInfo'
 import { ProgressLoading } from '../components/ProgressLoading'
-import { SectionContainer } from '../components/SectionContainer'
+import { SectionContainer } from '../layouts/SectionContainer'
 import { ResizedImagesList } from '../components/ResizedImagesList'
 import { useResizeImagesWithWorker } from '../hooks/useResizeImagesWithWorker'
 import { createDowndloadZip, getImagesAsAnchor } from '../helpers/resizeFiles';
@@ -87,62 +87,59 @@ export const ResizeScreen = () => {
   }
 
   if (phase === ResizeState.COMPRESSING) {
-    return (<ProgressLoading progress={progress} />)
+    return (<ProgressLoading progress={progress} title='Resizing...'/>)
   }
 
   return (
-    <>
-      <ResizeNav />
-      <main>
-        {(phase === ResizeState.TO_LOAD || phase === ResizeState.LOADED) && (
-          <SectionContainer>
-            <DragAndDrop onFilesSelected={handleUploadFiles} files={files.map(file => file.file)} />
-            <LoadInfo filesCount={files.length} onClearFiles={() => setFiles([])} />
-            {files.length > 0 && phase === ResizeState.LOADED && (
-              <>
-                <div className="upload-settings">
-                  <RangeSlider
-                    label="Image Quality"
-                    min={10}
-                    max={100}
-                    step={10}
-                    initialValue={imageQuality}
-                    onChange={(newValue) => setImageQuality(newValue)}
-                  />
-                  <RangeSlider
-                    label="Image Size"
-                    min={10}
-                    max={100}
-                    step={10}
-                    initialValue={imageSize} onChange={(newValue) => setImageSize(newValue)}
-                  />
-                </div>
-                <button className="primary bold large" onClick={handleResize}>
-                  Resize Images
-                </button>
-              </>
-            )}
-          </SectionContainer>
-        )}
-        {files.length > 0 && phase === ResizeState.LOADED && (
-          <SectionContainer>
-            <FileList
-              title='Files to resize'
-              files={files}
-              onRemoveFile={(index) => setFiles(files.filter((_, i) => i !== index))}
-            />
-          </SectionContainer>
-        )}
-        {anchorObjects.length > 0 && phase === ResizeState.COMPRESSED && (
-          <SectionContainer>
-            <ResizedImagesList
-              anchorObjects={anchorObjects}
-              onDownloadAll={handleOnDownloadAll}
-              onClear={handleOnClear}
-            />
-          </SectionContainer>
-        )}
-      </main>
-    </>
+    <ScreenLayout>
+      {(phase === ResizeState.TO_LOAD || phase === ResizeState.LOADED) && (
+        <SectionContainer>
+          <DragAndDrop onFilesSelected={handleUploadFiles} files={files.map(file => file.file)} />
+          <LoadInfo filesCount={files.length} onClearFiles={() => setFiles([])} />
+          {files.length > 0 && phase === ResizeState.LOADED && (
+            <>
+              <div className="upload-settings">
+                <RangeSlider
+                  label="Image Quality"
+                  min={10}
+                  max={100}
+                  step={10}
+                  initialValue={imageQuality}
+                  onChange={(newValue) => setImageQuality(newValue)}
+                />
+                <RangeSlider
+                  label="Image Size"
+                  min={10}
+                  max={100}
+                  step={10}
+                  initialValue={imageSize} onChange={(newValue) => setImageSize(newValue)}
+                />
+              </div>
+              <button className="primary bold large" onClick={handleResize}>
+                Resize Images
+              </button>
+            </>
+          )}
+        </SectionContainer>
+      )}
+      {files.length > 0 && phase === ResizeState.LOADED && (
+        <SectionContainer>
+          <FileList
+            title='Files to resize'
+            files={files}
+            onRemoveFile={(index) => setFiles(files.filter((_, i) => i !== index))}
+          />
+        </SectionContainer>
+      )}
+      {anchorObjects.length > 0 && phase === ResizeState.COMPRESSED && (
+        <SectionContainer>
+          <ResizedImagesList
+            anchorObjects={anchorObjects}
+            onDownloadAll={handleOnDownloadAll}
+            onClear={handleOnClear}
+          />
+        </SectionContainer>
+      )}
+    </ScreenLayout>
   )
 }

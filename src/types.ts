@@ -6,7 +6,9 @@ export type AnchorObject = {
 
 export type UploadFile = {
   file: File
-  url: string
+  url: string | ArrayBuffer | null
+  width?: number
+  height?: number
 }
 
 export interface FileWithBlob {

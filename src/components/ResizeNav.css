@@ -1,20 +1,66 @@
 
 div.nav-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   padding: 0 2rem;
   background-color: var(--color-background);
   color: var(--color-white);
   gap: 2rem;
-  margin-bottom: 3rem;
+  margin-block: 3rem;
 
   .logo {
-    width: 4rem;
-    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    svg {
+      width: 4rem;
+      aspect-ratio: 1;
+    }
   }
 
   span {
     color: var(--color-primary);
+  }
+
+  ul {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    padding: 0;
+
+    li {
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border 0.3s;
+      border-bottom: solid 2px transparent;
+
+      &:hover {
+        border-bottom: solid 2px var(--color-primary);
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+        transition: color 0.3s;
+
+        &.active {
+          color: var(--color-primary);
+        }
+      }
+    }
+  }
+}
+
+@media screen and (width > 630px) {
+  div.nav-container {
+    justify-content: center;
+    flex-direction: row;
+  }
+
+  ul {
+    margin-inline-start: 2rem;
   }
 }

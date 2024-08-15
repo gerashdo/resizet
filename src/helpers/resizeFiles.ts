@@ -56,5 +56,3 @@ export const resizeImage = async (file: File, imageQuality: number, imageSize: n
     });
   });
 };
-
-
