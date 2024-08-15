@@ -46,6 +46,12 @@ export default function ContactSheetScreen() {
     setIsLoading(false)
   }
 
+  const handleClearFiles = () => {
+    // Clear all the files and urls to free up memory
+    files.forEach(file => URL.revokeObjectURL(file.url as string))
+    setFiles([])
+  }
+
   if (isLoading) {
     return (<ProgressLoading title="Loading Photos..." progress={readProgress + transformProgress}/>)
   }
@@ -54,7 +60,7 @@ export default function ContactSheetScreen() {
     <ScreenLayout>
       <SectionContainer>
         <DragAndDrop onFilesSelected={handleUploadFiles} files={files.map(file => file.file)} />
-        <LoadInfo filesCount={files.length} onClearFiles={() => setFiles([])} />
+        <LoadInfo filesCount={files.length} onClearFiles={handleClearFiles} />
         {files.length > 0 && (
         <PDFDownloadLink
           document={<ContactSheetPDF images={files} />}
