@@ -15,7 +15,7 @@ section.drag-drop {
   border-radius: 0.5rem;
   cursor: pointer;
   width: auto;
-  height: calc(100% - 0.25rem);
+  height: 100%;
 
   &.active {
     border-color: #6dc24b;

@@ -26,7 +26,7 @@ export const FileList = ({
           <FileItem
             key={index}
             name={file.file.name}
-            url={file.url}
+            url={file.url as string}
             index={index}
             onRemoveFile={onRemoveFile}
           />

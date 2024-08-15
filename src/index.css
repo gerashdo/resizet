@@ -46,6 +46,12 @@
   }
 } */
 
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   margin: 0;
   display: flex;
@@ -67,6 +73,8 @@ button, .button {
   font-family: inherit;
   cursor: pointer;
   transition: all 0.25s ease;
+  text-decoration: none;
+  text-align: center;
 
   &.bold {
     font-weight: bold;
